@@ -2,6 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+//All the necessary namespaces are included and properties asked in instructions mentioned
+
 namespace MuncipalityManagementSystem.Models
 {
 	public class ServiceRequest

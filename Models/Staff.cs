@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
+//All the necessary namespaces are included and properties asked in instructions mentioned
+
 namespace MuncipalityManagementSystem.Models
 {
 	public class Staff

@@ -19,16 +19,11 @@ namespace MuncipalityManagementSystem.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
-			// Define relationships
-			modelBuilder.Entity<ServiceRequest>()
-				.HasOne(s => s.Citizen)
-				.WithMany(c => c.ServiceRequests)
-				.HasForeignKey(s => s.CitizenID);
-
-			modelBuilder.Entity<Report>()
-				.HasOne(r => r.Citizen)
-				.WithMany(c => c.Reports)
-				.HasForeignKey(r => r.CitizenID);
+			//This ensured the entity framework knows that we are using an existing database and it doesnt create one
+			modelBuilder.Entity<Citizen>().ToTable("Citizens");
+			modelBuilder.Entity<ServiceRequest>().ToTable("ServiceRequests");
+			modelBuilder.Entity<Staff>().ToTable("Staff");
+			modelBuilder.Entity<Report>().ToTable("Reports");
 		}
 	}
 }

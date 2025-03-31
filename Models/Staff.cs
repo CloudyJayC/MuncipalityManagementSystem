@@ -1,34 +1,28 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-
-//All the necessary namespaces are included and properties asked in instructions mentioned
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuncipalityManagementSystem.Models
 {
+	[Table("Staff")] // Matches your SQL table name
 	public class Staff
 	{
 		[Key]
 		public int StaffID { get; set; }
 
-		[Required]
-		[StringLength(255)]
+		[Required, MaxLength(255)]
 		public string FullName { get; set; }
 
-		[Required]
-		[StringLength(255)]
+		[Required, MaxLength(255)]
 		public string Position { get; set; }
 
-		[Required]
-		[StringLength(255)]
+		[Required, MaxLength(255)]
 		public string Department { get; set; }
 
-		[Required]
-		[EmailAddress]
-		[StringLength(255)]
+		[Required, EmailAddress, MaxLength(255)]
 		public string Email { get; set; }
 
-		[Required]
-		[StringLength(20)]
+		[Required, MaxLength(20)]
 		public string PhoneNumber { get; set; }
 
 		public DateTime HireDate { get; set; }

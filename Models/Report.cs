@@ -1,30 +1,29 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-//All the necessary namespaces are included and properties asked in instructions mentioned
+
 namespace MuncipalityManagementSystem.Models
 {
+	[Table("Reports")] // Matches your SQL table name
 	public class Report
 	{
 		[Key]
 		public int ReportID { get; set; }
 
-		[ForeignKey("Citizen")]
-		public int CitizenID { get; set; }
-
-		[Required]
-		[StringLength(255)]
+		[Required, MaxLength(255)]
 		public string ReportType { get; set; }
 
 		[Required]
 		public string Details { get; set; }
 
-		public DateTime SubmissionDate { get; set; } = DateTime.Now;
+		public DateTime SubmissionDate { get; set; }
 
-		[Required]
-		[StringLength(50)]
-		public string Status { get; set; } = "Under Review";
+		[Required, MaxLength(50)]
+		public string Status { get; set; }
 
+		// Foreign Key
+		[ForeignKey("Citizen")]
+		public int CitizenID { get; set; }
 		public Citizen Citizen { get; set; }
 	}
 }

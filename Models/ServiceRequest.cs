@@ -2,28 +2,25 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-//All the necessary namespaces are included and properties asked in instructions mentioned
-
 namespace MuncipalityManagementSystem.Models
 {
+	[Table("ServiceRequests")] // Matches your SQL table name
 	public class ServiceRequest
 	{
 		[Key]
 		public int RequestID { get; set; }
 
-		[ForeignKey("Citizen")]
-		public int CitizenID { get; set; }
-
-		[Required]
-		[StringLength(255)]
+		[Required, MaxLength(255)]
 		public string ServiceType { get; set; }
 
-		public DateTime RequestDate { get; set; } = DateTime.Now;
+		public DateTime RequestDate { get; set; }
 
-		[Required]
-		[StringLength(50)]
-		public string Status { get; set; } = "Pending";
+		[Required, MaxLength(50)]
+		public string Status { get; set; }
 
+		// Foreign Key
+		[ForeignKey("Citizen")]
+		public int CitizenID { get; set; }
 		public Citizen Citizen { get; set; }
 	}
 }

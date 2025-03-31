@@ -1,0 +1,29 @@
+﻿@model IEnumerable<MuncipalityManagementSystem.Models.Citizen>
+
+<h2>Citizen List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Citizen ID</th>
+            <th>Full Name</th>
+            <th>Address</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th>Date of Birth</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var citizen in Model)
+        {
+            <tr>
+                <td>@citizen.CitizenID</td>
+                <td>@citizen.FullName</td>
+                <td>@citizen.Address</td>
+                <td>@citizen.PhoneNumber</td>
+                <td>@citizen.Email</td>
+                <td>@citizen.DateOfBirth?.ToString("yyyy-MM-dd")</td>
+            </tr>
+        }
+    </tbody>
+</table>

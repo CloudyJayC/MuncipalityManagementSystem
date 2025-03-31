@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using MuncipalityManagementSystem.Data; // Namespace for ApplicationDbContext
 
 var builder = WebApplication.CreateBuilder(args);
 
-// This adds the  Database Context (Registering DbContext)
+// This adds the Database Context (Registering DbContext)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -13,10 +12,16 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// This enables MVC Routing (so it can find Controllers)
+// Enable Static Files (CSS, JS, images)
+app.UseStaticFiles();
+
+// Enable Routing
 app.UseRouting();
+
+// Enable Authorization (for future authentication)
 app.UseAuthorization();
 
+// Define the Default Route
 app.UseEndpoints(endpoints =>
 {
 	endpoints.MapControllerRoute(

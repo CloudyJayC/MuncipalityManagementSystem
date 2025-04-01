@@ -1,31 +1,32 @@
 @model MuncipalityManagementSystem.Models.Report
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     ViewData["Title"] = "Create Report";
 }
 
 <h1>Create Report</h1>
-
 <hr />
+
 <div class="row">
     <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- Report Type -->
             <div class="form-group">
-                <label asp-for="ReportType" class="control-label"></label>
+                <label asp-for="ReportType" class="control-label">Report Type</label>
                 <input asp-for="ReportType" class="form-control" />
                 <span asp-validation-for="ReportType" class="text-danger"></span>
             </div>
 
+            <!-- Details -->
             <div class="form-group">
                 <label asp-for="Details" class="control-label"></label>
                 <textarea asp-for="Details" class="form-control"></textarea>
                 <span asp-validation-for="Details" class="text-danger"></span>
             </div>
 
+            <!-- Status Dropdown (Fixed Issue) -->
             <div class="form-group">
                 <label asp-for="Status" class="control-label"></label>
                 <select asp-for="Status" class="form-control">
@@ -36,12 +37,14 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
 
+            <!-- Citizen Selection -->
             <div class="form-group">
                 <label asp-for="CitizenID" class="control-label">Select Citizen</label>
                 <select asp-for="CitizenID" class="form-control" asp-items="ViewBag.CitizenID"></select>
                 <span asp-validation-for="CitizenID" class="text-danger"></span>
             </div>
 
+            <!-- Buttons -->
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-success" />
                 <a asp-action="Index" class="btn btn-secondary">Back to List</a>

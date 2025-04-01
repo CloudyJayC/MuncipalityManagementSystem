@@ -10,6 +10,7 @@ namespace MuncipalityManagementSystem.Models
 		[Key]
 		public int ReportID { get; set; }
 
+		[Display(Name = "Report Type")] // Add this to fix the label issue
 		[Required, MaxLength(255)]
 		public string ReportType { get; set; }
 
@@ -23,7 +24,9 @@ namespace MuncipalityManagementSystem.Models
 
 		// Foreign Key
 		[ForeignKey("Citizen")]
+		[Display(Name = "Citizen")] // Ensures label shows "Citizen" instead of "CitizenID"
 		public int CitizenID { get; set; }
+
 		public Citizen Citizen { get; set; }
 	}
 }

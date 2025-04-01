@@ -10,155 +10,129 @@ using MuncipalityManagementSystem.Models;
 
 namespace MuncipalityManagementSystem.Controllers
 {
-    public class ServiceRequestsController : Controller
-    {
-        private readonly ApplicationDbContext _context;
+	public class ServiceRequestsController : Controller
+	{
+		private readonly ApplicationDbContext _context;
 
-        public ServiceRequestsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public ServiceRequestsController(ApplicationDbContext context)
+		{
+			_context = context;
+		}
 
-        // GET: ServiceRequests
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.ServiceRequests.Include(s => s.Citizen);
-            return View(await applicationDbContext.ToListAsync());
-        }
+		// GET: ServiceRequests
+		public async Task<IActionResult> Index()
+		{
+			var applicationDbContext = _context.ServiceRequests.Include(s => s.Citizen);
+			return View(await applicationDbContext.ToListAsync());
+		}
 
-        // GET: ServiceRequests/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		// GET: ServiceRequests/Details/5
+		public async Task<IActionResult> Details(int? id)
+		{
+			if (id == null) return NotFound();
 
-            var serviceRequest = await _context.ServiceRequests
-                .Include(s => s.Citizen)
-                .FirstOrDefaultAsync(m => m.RequestID == id);
-            if (serviceRequest == null)
-            {
-                return NotFound();
-            }
+			var serviceRequest = await _context.ServiceRequests
+				.Include(s => s.Citizen)
+				.FirstOrDefaultAsync(m => m.RequestID == id);
 
-            return View(serviceRequest);
-        }
+			if (serviceRequest == null) return NotFound();
 
-        // GET: ServiceRequests/Create
-        public IActionResult Create()
-        {
-            ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "Address");
-            return View();
-        }
+			return View(serviceRequest);
+		}
 
-        // POST: ServiceRequests/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RequestID,ServiceType,RequestDate,Status,CitizenID")] ServiceRequest serviceRequest)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(serviceRequest);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "Address", serviceRequest.CitizenID);
-            return View(serviceRequest);
-        }
+		// GET: ServiceRequests/Create
+		public IActionResult Create()
+		{
+			ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName");
+			return View();
+		}
 
-        // GET: ServiceRequests/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		// POST: ServiceRequests/Create
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("ServiceType,RequestDate,Status,CitizenID")] ServiceRequest serviceRequest)
+		{
+			if (!ModelState.IsValid)
+			{
+				// Debugging: Log validation errors
+				foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+				{
+					Console.WriteLine(error.ErrorMessage);
+				}
 
-            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
-            if (serviceRequest == null)
-            {
-                return NotFound();
-            }
-            ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "Address", serviceRequest.CitizenID);
-            return View(serviceRequest);
-        }
+				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+				return View(serviceRequest);
+			}
 
-        // POST: ServiceRequests/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RequestID,ServiceType,RequestDate,Status,CitizenID")] ServiceRequest serviceRequest)
-        {
-            if (id != serviceRequest.RequestID)
-            {
-                return NotFound();
-            }
+			try
+			{
+				// Ensure RequestDate is set properly
+				if (serviceRequest.RequestDate == default)
+				{
+					serviceRequest.RequestDate = DateTime.Now;
+				}
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(serviceRequest);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ServiceRequestExists(serviceRequest.RequestID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "Address", serviceRequest.CitizenID);
-            return View(serviceRequest);
-        }
+				_context.Add(serviceRequest);
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
+			}
+			catch (Exception ex)
+			{
+				// Log the error
+				Console.WriteLine($"Error: {ex.Message}");
+				ModelState.AddModelError("", "An error occurred while saving the request.");
+				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+				return View(serviceRequest);
+			}
+		}
 
-        // GET: ServiceRequests/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+		// GET: ServiceRequests/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+			if (id == null) return NotFound();
 
-            var serviceRequest = await _context.ServiceRequests
-                .Include(s => s.Citizen)
-                .FirstOrDefaultAsync(m => m.RequestID == id);
-            if (serviceRequest == null)
-            {
-                return NotFound();
-            }
+			var serviceRequest = await _context.ServiceRequests.FindAsync(id);
+			if (serviceRequest == null) return NotFound();
 
-            return View(serviceRequest);
-        }
+			ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+			return View(serviceRequest);
+		}
 
-        // POST: ServiceRequests/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
-            if (serviceRequest != null)
-            {
-                _context.ServiceRequests.Remove(serviceRequest);
-            }
+		// POST: ServiceRequests/Edit/5
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Edit(int id, [Bind("RequestID,ServiceType,RequestDate,Status,CitizenID")] ServiceRequest serviceRequest)
+		{
+			if (id != serviceRequest.RequestID) return NotFound();
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+			if (!ModelState.IsValid)
+			{
+				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+				return View(serviceRequest);
+			}
 
-        private bool ServiceRequestExists(int id)
-        {
-            return _context.ServiceRequests.Any(e => e.RequestID == id);
-        }
-    }
+			try
+			{
+				_context.Update(serviceRequest);
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!ServiceRequestExists(serviceRequest.RequestID))
+				{
+					return NotFound();
+				}
+				else
+				{
+					throw;
+				}
+			}
+		}
+
+		private bool ServiceRequestExists(int id)
+		{
+			return _context.ServiceRequests.Any(e => e.RequestID == id);
+		}
+	}
 }

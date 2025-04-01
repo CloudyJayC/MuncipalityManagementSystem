@@ -19,7 +19,6 @@ namespace MuncipalityManagementSystem.Data
 		{
 			base.OnModelCreating(modelBuilder);
 
-			//This ensured the entity framework knows that we are using an existing database and it doesnt create one
 			modelBuilder.Entity<Citizen>().ToTable("Citizens");
 			modelBuilder.Entity<ServiceRequest>().ToTable("ServiceRequests");
 			modelBuilder.Entity<Staff>().ToTable("Staff");

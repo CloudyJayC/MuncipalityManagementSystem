@@ -4,23 +4,27 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuncipalityManagementSystem.Models
 {
-	[Table("ServiceRequests")] // Matches your SQL table name
+	[Table("ServiceRequests")]
 	public class ServiceRequest
 	{
 		[Key]
 		public int RequestID { get; set; }
 
-		[Required, MaxLength(255)]
+		[Required(ErrorMessage = "Service Type is required")]
+		[MaxLength(255)]
 		public string ServiceType { get; set; }
 
-		public DateTime RequestDate { get; set; }
+		[Required(ErrorMessage = "Request Date is required")]
+		public DateTime RequestDate { get; set; } = DateTime.Now;
 
-		[Required, MaxLength(50)]
+		[Required(ErrorMessage = "Status is required")]
+		[MaxLength(50)]
 		public string Status { get; set; }
 
-		// Foreign Key
 		[ForeignKey("Citizen")]
+		[Required(ErrorMessage = "Citizen selection is required")]
 		public int CitizenID { get; set; }
+
 		public Citizen Citizen { get; set; }
 	}
 }

@@ -4,27 +4,32 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuncipalityManagementSystem.Models
 {
-	[Table("Reports")] // Matches your SQL table name
+	[Table("Reports")]
 	public class Report
 	{
 		[Key]
 		public int ReportID { get; set; }
 
-		[Display(Name = "Report Type")] // Add this to fix the label issue
-		[Required, MaxLength(255)]
+		[Display(Name = "Report Type")]
+		[Required(ErrorMessage = "Report type is required")]
+		[MaxLength(255)]
 		public string ReportType { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "Details are required")]
 		public string Details { get; set; }
 
-		public DateTime SubmissionDate { get; set; }
+		[Display(Name = "Submission Date")]
+		public DateTime SubmissionDate { get; set; } = DateTime.Now;
 
-		[Required, MaxLength(50)]
-		public string Status { get; set; }
+		[Display(Name = "Status")]
+		[Required(ErrorMessage = "Status is required")]
+		[MaxLength(50)]
+		public string Status { get; set; } = "Under Review";
 
 		// Foreign Key
 		[ForeignKey("Citizen")]
-		[Display(Name = "Citizen")] // Ensures label shows "Citizen" instead of "CitizenID"
+		[Display(Name = "Citizen")]
+		[Required(ErrorMessage = "Please select a citizen")]
 		public int CitizenID { get; set; }
 
 		public Citizen Citizen { get; set; }

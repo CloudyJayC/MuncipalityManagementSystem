@@ -5,6 +5,7 @@
 
 /* Ensures page content does not overlap with navbar */
 body {
+    padding: 0;
     padding-top: 56px;
 }
 

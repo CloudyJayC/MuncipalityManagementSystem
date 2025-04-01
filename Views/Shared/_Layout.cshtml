@@ -12,9 +12,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <!-- So that there's white gap between navbar and top of page-->
-    margin: 0;
-    padding: 0;
     <!-- Navigation Bar for all pages -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -26,6 +23,12 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Citizens" asp-action="Index">Citizens</a>

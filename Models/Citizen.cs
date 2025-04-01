@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MuncipalityManagementSystem.Models
 {
-	[Table("Citizens")] //Made sure to match with sql table name manually created with sql
 	public class Citizen
 	{
 		[Key]
@@ -20,15 +17,13 @@ namespace MuncipalityManagementSystem.Models
 		[Required, MaxLength(20)]
 		public string PhoneNumber { get; set; }
 
-		[EmailAddress, MaxLength(255)]
+		[Required, EmailAddress]
 		public string Email { get; set; }
 
+		[DataType(DataType.Date)]
 		public DateTime? DateOfBirth { get; set; }
 
-		public DateTime RegistrationDate { get; set; }
-
-		// Relationships
-		public ICollection<ServiceRequest> ServiceRequests { get; set; }
-		public ICollection<Report> Reports { get; set; }
+		[DataType(DataType.Date)]
+		public DateTime RegistrationDate { get; set; } = DateTime.Now; // Automatically set default value
 	}
 }

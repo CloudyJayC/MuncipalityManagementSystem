@@ -21,9 +21,9 @@ app.UseRouting();
 // Enable Authorization
 app.UseAuthorization();
 
-// Define the Default Route
+// Define the Default Route (now points to Home instead of Citizens)
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Citizens}/{action=Index}/{id?}");
+	pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

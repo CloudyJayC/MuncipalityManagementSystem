@@ -3,59 +3,41 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Reports";
 }
 
-<h1>Index</h1>
+<h1>Reports</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Report</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ReportType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Details)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SubmissionDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Citizen)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.ReportType)</th>
+            <th>@Html.DisplayNameFor(model => model.Details)</th>
+            <th>@Html.DisplayNameFor(model => model.SubmissionDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th>Citizen</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReportType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Details)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubmissionDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Citizen.Address)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ReportID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ReportID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ReportID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ReportType)</td>
+                <td>@Html.DisplayFor(modelItem => item.Details)</td>
+                <td>@item.SubmissionDate.ToString("yyyy-MM-dd")</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>@Html.DisplayFor(modelItem => item.Citizen.FullName)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ReportID" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.ReportID" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.ReportID" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

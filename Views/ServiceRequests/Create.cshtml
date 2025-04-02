@@ -13,20 +13,23 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
+            <!-- Service Type -->
             <div class="mb-3">
-                <label asp-for="ServiceType" class="form-label fw-bold"></label>
+                <label asp-for="ServiceType" class="form-label fw-bold">Service Type</label>
                 <input asp-for="ServiceType" class="form-control" placeholder="Enter service type" />
                 <span asp-validation-for="ServiceType" class="text-danger"></span>
             </div>
 
+            <!-- Request Date -->
             <div class="mb-3">
-                <label asp-for="RequestDate" class="form-label fw-bold"></label>
+                <label asp-for="RequestDate" class="form-label fw-bold">Request Date</label>
                 <input asp-for="RequestDate" type="date" class="form-control" />
                 <span asp-validation-for="RequestDate" class="text-danger"></span>
             </div>
 
+            <!-- Status Dropdown -->
             <div class="mb-3">
-                <label asp-for="Status" class="form-label fw-bold"></label>
+                <label asp-for="Status" class="form-label fw-bold">Status</label>
                 <select asp-for="Status" class="form-select">
                     <option value="Pending">Pending</option>
                     <option value="In Progress">In Progress</option>
@@ -35,13 +38,24 @@
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
 
+            <!-- Citizen Selection -->
             <div class="mb-3">
-                <label asp-for="CitizenID" class="form-label fw-bold"></label>
-                <select asp-for="CitizenID" class="form-select" asp-items="ViewBag.CitizenID"></select>
+                <label asp-for="CitizenID" class="form-label fw-bold">Select Citizen</label>
+                <select asp-for="CitizenID" class="form-select" asp-items="ViewBag.CitizenID">
+                    <option value="">-- Select a Citizen --</option>
+                </select>
+                <span asp-validation-for="CitizenID" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle"></i> Create</button>
-            <a asp-action="Index" class="btn btn-secondary ms-2"><i class="bi bi-arrow-left"></i> Back to List</a>
+            <!-- Buttons -->
+            <div class="d-flex">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Create
+                </button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">
+                    <i class="bi bi-arrow-left"></i> Back to List
+                </a>
+            </div>
         </form>
     </div>
 </div>

@@ -50,14 +50,14 @@ namespace MuncipalityManagementSystem.Controllers
 		// POST: ServiceRequests/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("ServiceType,RequestDate,Status,CitizenID")] ServiceRequest serviceRequest)
+		public async Task<IActionResult> Create(ServiceRequest serviceRequest)
 		{
 			if (!ModelState.IsValid)
 			{
-				// Debugging: Log validation errors
+				// Capture validation errors and display them in the view
 				foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
 				{
-					Console.WriteLine(error.ErrorMessage);
+					ModelState.AddModelError("", error.ErrorMessage);
 				}
 
 				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
@@ -66,8 +66,8 @@ namespace MuncipalityManagementSystem.Controllers
 
 			try
 			{
-				// Ensure RequestDate is set properly
-				if (serviceRequest.RequestDate == default)
+				// Ensure RequestDate is properly set
+				if (serviceRequest.RequestDate == null || serviceRequest.RequestDate == DateTime.MinValue)
 				{
 					serviceRequest.RequestDate = DateTime.Now;
 				}
@@ -78,9 +78,8 @@ namespace MuncipalityManagementSystem.Controllers
 			}
 			catch (Exception ex)
 			{
-				// Log the error
-				Console.WriteLine($"Error: {ex.Message}");
-				ModelState.AddModelError("", "An error occurred while saving the request.");
+				// Log the error and show it in the UI
+				ModelState.AddModelError("", "An error occurred while saving the request: " + ex.Message);
 				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
 				return View(serviceRequest);
 			}
@@ -101,7 +100,7 @@ namespace MuncipalityManagementSystem.Controllers
 		// POST: ServiceRequests/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("RequestID,ServiceType,RequestDate,Status,CitizenID")] ServiceRequest serviceRequest)
+		public async Task<IActionResult> Edit(int id, ServiceRequest serviceRequest)
 		{
 			if (id != serviceRequest.RequestID) return NotFound();
 
@@ -113,6 +112,12 @@ namespace MuncipalityManagementSystem.Controllers
 
 			try
 			{
+				// Ensure RequestDate is properly set
+				if (serviceRequest.RequestDate == null || serviceRequest.RequestDate == DateTime.MinValue)
+				{
+					serviceRequest.RequestDate = DateTime.Now;
+				}
+
 				_context.Update(serviceRequest);
 				await _context.SaveChangesAsync();
 				return RedirectToAction(nameof(Index));
@@ -128,8 +133,15 @@ namespace MuncipalityManagementSystem.Controllers
 					throw;
 				}
 			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError("", "An error occurred while updating the request: " + ex.Message);
+				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+				return View(serviceRequest);
+			}
 		}
 
+		// Helper method to check if a service request exists
 		private bool ServiceRequestExists(int id)
 		{
 			return _context.ServiceRequests.Any(e => e.RequestID == id);

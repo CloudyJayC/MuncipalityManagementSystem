@@ -1,8 +1,21 @@
 ﻿@{
     ViewData["Title"] = "Home";
-}
-@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Welcome to the Municipality Management System</h1>
-<p>This system helps manage citizens, service requests, reports, and staff.</p>
+
+<div class="container mt-4">
+    <div class="jumbotron bg-light p-5 shadow-lg rounded">
+        <h1 class="display-4 text-primary">Welcome to the Municipality Management System</h1>
+        <p class="lead">
+            Our system helps manage citizens, service requests, reports, and staff, ensuring
+            an efficient and well-organized municipality.
+        </p>
+        <hr class="my-4">
+        <p>
+            Get started by exploring our features and services.
+        </p>
+        <a class="btn btn-success btn-lg" asp-controller="ServiceRequests" asp-action="Index">
+            <i class="bi bi-clipboard-check"></i> View Service Requests
+        </a>
+    </div>
+</div>

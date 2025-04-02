@@ -1,9 +1,27 @@
 ﻿@{
-    ViewData["Title"] = "Contact";
-}
-@{
+    ViewData["Title"] = "Contact Us";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h1>Contact Us</h1>
-<p>Email: support@municipalitysystem.com</p>
-<p>Phone: (123) 456-7890</p>
+
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-primary mb-3">Get in Touch</h2>
+        <p class="lead">Have questions? Reach out to us anytime!</p>
+
+        <hr>
+
+        <div class="mb-3">
+            <i class="bi bi-envelope-fill text-primary"></i>
+            <strong>Email:</strong> <a href="mailto:support@municipalitysystem.com">support@municipalitysystem.com</a>
+        </div>
+
+        <div class="mb-3">
+            <i class="bi bi-telephone-fill text-primary"></i>
+            <strong>Phone:</strong> (123) 456-7890
+        </div>
+
+        <a href="mailto:support@municipalitysystem.com" class="btn btn-primary">
+            <i class="bi bi-send-fill"></i> Send an Email
+        </a>
+    </div>
+</div>

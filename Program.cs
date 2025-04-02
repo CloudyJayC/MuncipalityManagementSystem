@@ -3,25 +3,25 @@ using MuncipalityManagementSystem.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Database Context
+//This adds Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add MVC services
+//This adds MVC Services
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Enable Static Files (CSS, JS, images)
+//This enables Static Files (CSS, JS, images)
 app.UseStaticFiles();
 
-// Enable Routing
+//This enables Routing
 app.UseRouting();
 
-// Enable Authorization
+// This enables Authorization
 app.UseAuthorization();
 
-// Define the Default Route (now points to Home instead of Citizens)
+// Defines the Default Route (now points to Home instead of Citizens)
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");

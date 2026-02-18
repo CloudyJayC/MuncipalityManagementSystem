@@ -26,245 +26,119 @@ MuncipalityManagementSystem/
 ├── Controllers/          # MVC Controllers for business logic
 │   ├── HomeController.cs
 │   ├── CitizensController.cs
-│   ├── ServiceRequestsController.cs
-│   ├── StaffController.cs
-│   └── ReportsController.cs
-├── Models/              # Data models
-│   ├── Citizen.cs
-│   ├── ServiceRequest.cs
-│   ├── Staff.cs
-│   └── Report.cs
-├── Data/                # Database context
-│   └── ApplicationDbContext.cs
-├── Views/               # Razor views for each controller
-│   ├── Home/
-│   ├── Citizens/
-│   ├── ServiceRequests/
-│   ├── Staff/
-│   └── Reports/
-├── wwwroot/             # Static files (CSS, JS, Images)
-│   └── css/site.css
-├── Migrations/          # Entity Framework migrations
-├── Properties/          # Launch settings
-├── appsettings.json     # Configuration settings
-└── Program.cs           # Application entry point
+# Municipality Management System
+
+A concise, up-to-date overview and setup guide for the Municipality Management System web application.
+
+This repository is an ASP.NET Core MVC application that helps manage citizens, service requests, staff, and reports for a municipality.
+
+## Key Features
+
+- Citizen CRUD with validation and registration metadata
+- Service Request tracking with full CRUD and status management (Delete implemented)
+- Staff directory with department and position tracking
+- Report creation and tracking linked to citizens
+- Responsive UI (Bootstrap 5) with centralized alert/feedback system (TempData + Bootstrap alerts)
+- EF Core (SQL Server) for persistence and migrations
+- Improved error handling, null-safety for models, and consistent code style
+
+## Technology
+
+- Target framework: .NET 8.0 (use .NET SDK 8.0 or later)
+- ASP.NET Core MVC
+- Entity Framework Core with SQL Server
+- Frontend: Bootstrap 5, custom wwwroot/css/site.css
+
+## Project layout (important files)
+
+```
+./
+├─ Controllers/            # MVC controllers (Home, Citizens, ServiceRequests, Staff, Reports)
+├─ Models/                 # Domain models (Citizen, ServiceRequest, Staff, Report)
+├─ Data/                   # ApplicationDbContext and EF Core configuration
+├─ Views/                  # Razor views
+├─ wwwroot/                # Static assets (css/site.css)
+├─ Migrations/             # EF Core migrations
+├─ appsettings.json        # Configuration (connection strings, logging)
+└─ Program.cs              # App startup, services, routing
 ```
 
-## Prerequisites
+## Quick Start
 
-- **.NET SDK**: Version 8.0 or higher
-- **SQL Server**: Express or Higher Edition
-- **Visual Studio** 2022 or **Visual Studio Code** with C# extension
+Requirements:
 
-## Installation & Setup
+- .NET SDK 8.0 or later
+- SQL Server (Express or full)
 
-### 1. Clone the Repository
+1. Clone the repo and change directory:
+
 ```bash
 git clone <repository-url>
 cd MuncipalityManagementSystem
 ```
 
-### 2. Configure Database Connection
-
-Update the connection string in `appsettings.json`:
+2. Configure the database connection in `appsettings.json` (edit `DefaultConnection`):
 
 ```json
 "ConnectionStrings": {
-  "DefaultConnection": "Server=YOUR_SERVER;Database=MuncipalityDB;Trusted_Connection=True;TrustServerCertificate=True"
+  "DefaultConnection": "Server=YOUR_SERVER;Database=MuncipalityDB;Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True"
 }
 ```
 
-Replace `YOUR_SERVER` with your SQL Server instance name.
-
-### 3. Apply Database Migrations
+3. Apply EF Core migrations to create/update the database:
 
 ```bash
 dotnet ef database update
 ```
 
-This creates the database and tables automatically.
-
-### 4. Run the Application
+4. Run the app:
 
 ```bash
 dotnet run
 ```
 
-The application will be available at `https://localhost:5001` or `http://localhost:5000`.
+Open the app using the URL shown in the console or configured in `Properties/launchSettings.json`.
 
-## Usage
+## Notes on current behavior and conventions
 
-### Accessing Features
+- Default route points to `HomeController` (`{controller=Home}/{action=Index}/{id?}`) — see `Program.cs`.
+- Controllers use `TempData` for success/error messages; alerts are rendered in the shared layout for consistent UX.
+- String properties in models use nullable reference types (e.g., `string?`) to match project null-safety decisions.
+- Debug console output was removed in favor of UI alerts and proper logging.
 
-- **Home Page**: Navigate to the home page for an overview
-- **Citizens**: Manage citizen records (Create, Read, Update, Delete)
-- **Service Requests**: Track and manage citizen service requests
-- **Staff**: Manage municipality staff information
-- **Reports**: Create and track reports
-- **About & Contact**: Information pages
+## Database & Migrations
 
-### Common Operations
+- Migrations are tracked under `Migrations/`. Use `dotnet ef migrations add <Name>` to create a migration, then `dotnet ef database update`.
 
-#### Adding a New Citizen
-1. Click "Citizens" in the navigation menu
-2. Click "Add New Citizen" button
-3. Fill in the required information (Name, Address, Phone, Email)
-4. Click "Create"
+## Development workflow
 
-#### Creating a Service Request
-1. Navigate to "Service Requests"
-2. Click "Create" button
-3. Select a citizen and enter service details
-4. Set the status and submit
-5. Click "Create"
-
-#### Managing Staff
-1. Go to "Staff" section
-2. View, add, edit, or delete staff members
-3. Track departments and positions
-
-## Database Models
-
-### Citizen
-- CitizenID (Primary Key)
-- FullName (Required, Max 255 chars)
-- Address (Required, Max 255 chars)
-- PhoneNumber (Required, Max 20 chars)
-- Email (Required, Email format)
-- DateOfBirth (Optional)
-- RegistrationDate (Auto-set)
-
-### ServiceRequest
-- RequestID (Primary Key)
-- ServiceType (Required)
-- RequestDate (Auto-set to current date)
-- Status (Required)
-- CitizenID (Foreign Key)
-
-### Staff
-- StaffID (Primary Key)
-- FullName (Required)
-- Position (Required)
-- Department (Required)
-- Email (Required)
-- PhoneNumber (Required)
-- HireDate
-
-### Report
-- ReportID (Primary Key)
-- ReportType (Required)
-- Details (Required)
-- SubmissionDate (Auto-set)
-- Status (Default: "Under Review")
-- CitizenID (Foreign Key)
-
-## Configuration
-
-### appsettings.json
-
-The main configuration file includes:
-- **Logging**: Configure logging levels
-- **AllowedHosts**: Specify allowed hosts (default: *)
-- **ConnectionStrings**: Database connection configuration
-
-### Launch Settings
-
-Located in `Properties/launchSettings.json`, configure:
-- Application URLs (HTTP/HTTPS)
-- Environment variables
-- Launch browser preferences
-
-## Error Handling
-
-The application includes comprehensive error handling:
-- **Validation Errors**: Form validation with user-friendly messages
-- **Database Errors**: Exception handling with meaningful error messages
-- **Not Found Errors**: Proper 404 responses for missing resources
-- **Success Messages**: User feedback for successful operations
-
-## Security Features
-
-- CSRF Protection via anti-forgery tokens
-- Model validation on both client and server side
-- SQL injection prevention via parameterized queries (EF Core)
-- Email validation format
-
-## Development
-
-### Adding a New Feature
-
-1. Create the model in the `Models` folder
-2. Add DbSet to `ApplicationDbContext.cs`
-3. Create a migration: `dotnet ef migrations add FeatureName`
-4. Update database: `dotnet ef database update`
-5. Generate controller scaffolding or create manually
-6. Create corresponding Razor views
-
-### Code Standards
-
-- Use async/await for database operations
-- Implement proper error handling
-- Use meaningful variable and method names
-- Add proper validation attributes to models
-- Use TempData for user feedback messages
+- Follow the coding conventions in `CONTRIBUTING.md` (indentation, async usage, commit message style).
+- To add a feature:
+  - Add model to `Models/` and DbSet to `Data/ApplicationDbContext.cs`.
+  - Create a migration and update the database.
+  - Add controller and Razor views (scaffolding or manual).
 
 ## Troubleshooting
 
-### Database Connection Issues
-- Verify SQL Server is running
-- Check the connection string in appsettings.json
-- Ensure `TrustServerCertificate=True` for self-signed certificates
-
-### Migration Errors
-```bash
-# Reset migrations (be careful with production data!)
-dotnet ef migrations remove
-dotnet ef database update
-```
-
-### Port Already in Use
-The application may be running on a different port. Check `Properties/launchSettings.json` for configured ports.
-
-## Performance Considerations
-
-- Database queries use async patterns for better scalability
-- Views use table pagination for large datasets (recommended)
-- Static files are served from wwwroot with caching enabled
-
-## Future Enhancements
-
-- Authentication and authorization (ASP.NET Identity)
-- Advanced reporting and analytics
-- Email notifications for service requests
-- Pagination for large datasets
-- Export functionality (CSV, PDF)
-- Search and filtering capabilities
-- API endpoints for mobile apps
+- If the DB connection fails: validate `DefaultConnection` in `appsettings.json` and ensure SQL Server is running.
+- If ports conflict: check `Properties/launchSettings.json` for configured application URLs.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+See `CONTRIBUTING.md` for contribution guidelines, code style, and PR process.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For issues, questions, or suggestions:
-1. Check the troubleshooting section above
-2. Review the code comments in key files
-3. Check SQL Server error logs
-4. Create an issue with detailed description
-
-## Author
-
-Created as a comprehensive municipality management system for .NET development.
+This project is released under the MIT License. See the `LICENSE` file for details.
 
 ---
 
-**Last Updated**: February 2025
+**Last Updated**: February 18, 2026
+
+## License
+
+This project is released under the MIT License. See the `LICENSE` file for details.
+
+---
+
+**Last Updated**: February 18, 2026

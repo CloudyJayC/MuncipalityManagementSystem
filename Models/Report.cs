@@ -13,18 +13,19 @@ namespace MuncipalityManagementSystem.Models
 		[Display(Name = "Report Type")]
 		[Required(ErrorMessage = "Report type is required")]
 		[MaxLength(255)]
-		public string ReportType { get; set; }
+		public string? ReportType { get; set; }
 
 		[Required(ErrorMessage = "Details are required")]
-		public string Details { get; set; }
+		public string? Details { get; set; }
 
 		[Display(Name = "Submission Date")]
+		[DataType(DataType.Date)]
 		public DateTime SubmissionDate { get; set; } = DateTime.Now;
 
 		[Display(Name = "Status")]
 		[Required(ErrorMessage = "Status is required")]
 		[MaxLength(50)]
-		public string Status { get; set; } = "Under Review";
+		public string? Status { get; set; } = "Under Review";
 
 		// Foreign Key
 		[ForeignKey("Citizen")]
@@ -32,6 +33,6 @@ namespace MuncipalityManagementSystem.Models
 		[Required(ErrorMessage = "Please select a citizen")]
 		public int CitizenID { get; set; }
 
-		public Citizen Citizen { get; set; }
+		public Citizen? Citizen { get; set; }
 	}
 }

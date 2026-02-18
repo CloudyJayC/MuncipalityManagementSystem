@@ -53,26 +53,20 @@ namespace MuncipalityManagementSystem.Controllers
 		{
 			if (!ModelState.IsValid)
 			{
-				Console.WriteLine("Model validation failed!");
-				foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-				{
-					Console.WriteLine(error.ErrorMessage);
-				}
 				return View(citizen);
 			}
 
 			try
 			{
-				citizen.RegistrationDate = DateTime.Now; // Automatically set registration date
+				citizen.RegistrationDate = DateTime.Now;
 				_context.Add(citizen);
 				await _context.SaveChangesAsync();
-				Console.WriteLine("Citizen added successfully!");
+				TempData["SuccessMessage"] = "Citizen added successfully!";
 				return RedirectToAction(nameof(Index));
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				Console.WriteLine($"Error: {ex.Message}");
-				ModelState.AddModelError("", "An error occurred while saving the data.");
+				ModelState.AddModelError("", "An error occurred while saving the data. Please try again.");
 				return View(citizen);
 			}
 		}
@@ -105,7 +99,6 @@ namespace MuncipalityManagementSystem.Controllers
 
 			if (!ModelState.IsValid)
 			{
-				Console.WriteLine("Model validation failed!");
 				return View(citizen);
 			}
 
@@ -113,6 +106,7 @@ namespace MuncipalityManagementSystem.Controllers
 			{
 				_context.Update(citizen);
 				await _context.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Citizen updated successfully!";
 				return RedirectToAction(nameof(Index));
 			}
 			catch (DbUpdateConcurrencyException)
@@ -155,6 +149,11 @@ namespace MuncipalityManagementSystem.Controllers
 			{
 				_context.Citizens.Remove(citizen);
 				await _context.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Citizen deleted successfully!";
+			}
+			else
+			{
+				TempData["ErrorMessage"] = "Error: Could not delete the citizen.";
 			}
 			return RedirectToAction(nameof(Index));
 		}

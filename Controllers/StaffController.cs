@@ -50,17 +50,23 @@ namespace MuncipalityManagementSystem.Controllers
         }
 
         // POST: Staff/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StaffID,FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
+        public async Task<IActionResult> Create([Bind("FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(staff);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(staff);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Staff member added successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "An error occurred while saving. Please try again.");
+                }
             }
             return View(staff);
         }
@@ -82,8 +88,6 @@ namespace MuncipalityManagementSystem.Controllers
         }
 
         // POST: Staff/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("StaffID,FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
@@ -99,6 +103,7 @@ namespace MuncipalityManagementSystem.Controllers
                 {
                     _context.Update(staff);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Staff member updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -143,9 +148,13 @@ namespace MuncipalityManagementSystem.Controllers
             if (staff != null)
             {
                 _context.Staffs.Remove(staff);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Staff member deleted successfully!";
             }
-
-            await _context.SaveChangesAsync();
+            else
+            {
+                TempData["ErrorMessage"] = "Error: Could not delete the staff member.";
+            }
             return RedirectToAction(nameof(Index));
         }
 

@@ -12,19 +12,19 @@ namespace MuncipalityManagementSystem.Models
 
 		[Required(ErrorMessage = "Service Type is required")]
 		[MaxLength(255)]
-		public string ServiceType { get; set; }
+		public string? ServiceType { get; set; }
 
 		[Required(ErrorMessage = "Request Date is required")]
 		public DateTime RequestDate { get; set; } = DateTime.Now;
 
 		[Required(ErrorMessage = "Status is required")]
 		[MaxLength(50)]
-		public string Status { get; set; }
+		public string? Status { get; set; }
 
 		[ForeignKey("Citizen")]
 		[Required(ErrorMessage = "Citizen selection is required")]
 		public int CitizenID { get; set; }
 
-		public Citizen Citizen { get; set; }
+		public Citizen? Citizen { get; set; }
 	}
 }

@@ -20,7 +20,7 @@
     <dd class="col-sm-10">@Html.DisplayFor(model => model.Status)</dd>
 
     <dt class="col-sm-2">Citizen</dt>
-    <dd class="col-sm-10">@Html.DisplayFor(model => model.Citizen.FullName)</dd>
+    <dd class="col-sm-10">@(Model.Citizen?.FullName ?? "Not Assigned")</dd>
 </dl>
 
 <a asp-action="Edit" asp-route-id="@Model.ReportID" class="btn btn-warning">Edit</a>

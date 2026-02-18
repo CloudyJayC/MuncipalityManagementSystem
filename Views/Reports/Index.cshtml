@@ -9,16 +9,6 @@
     <div class="card shadow-lg p-4">
         <h2 class="text-primary">Reports</h2>
 
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["SuccessMessage"]
-                <button type="button" class="close" data-dismiss="alert">
-                    <span>&times;</span>
-                </button>
-            </div>
-        }
-
         <a asp-action="Create" class="btn btn-success mb-3"><i class="bi bi-file-earmark-plus"></i> New Report</a>
 
         <table class="table table-striped table-hover shadow-sm rounded">

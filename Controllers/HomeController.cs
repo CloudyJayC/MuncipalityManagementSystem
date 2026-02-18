@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MunicipalityManagementSystem.Controllers
+namespace MuncipalityManagementSystem.Controllers
 {
 	public class HomeController : Controller
 	{

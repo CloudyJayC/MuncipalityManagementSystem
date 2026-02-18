@@ -67,13 +67,14 @@ namespace MuncipalityManagementSystem.Controllers
 			try
 			{
 				// Ensure RequestDate is properly set
-				if (serviceRequest.RequestDate == null || serviceRequest.RequestDate == DateTime.MinValue)
+				if (serviceRequest.RequestDate == DateTime.MinValue)
 				{
 					serviceRequest.RequestDate = DateTime.Now;
 				}
 
 				_context.Add(serviceRequest);
 				await _context.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Service request created successfully!";
 				return RedirectToAction(nameof(Index));
 			}
 			catch (Exception ex)
@@ -113,13 +114,14 @@ namespace MuncipalityManagementSystem.Controllers
 			try
 			{
 				// Ensure RequestDate is properly set
-				if (serviceRequest.RequestDate == null || serviceRequest.RequestDate == DateTime.MinValue)
+				if (serviceRequest.RequestDate == DateTime.MinValue)
 				{
 					serviceRequest.RequestDate = DateTime.Now;
 				}
 
 				_context.Update(serviceRequest);
 				await _context.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Service request updated successfully!";
 				return RedirectToAction(nameof(Index));
 			}
 			catch (DbUpdateConcurrencyException)
@@ -139,6 +141,35 @@ namespace MuncipalityManagementSystem.Controllers
 				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
 				return View(serviceRequest);
 			}
+		}
+
+		// GET: ServiceRequests/Delete/5
+		public async Task<IActionResult> Delete(int? id)
+		{
+			if (id == null) return NotFound();
+
+			var serviceRequest = await _context.ServiceRequests
+				.Include(s => s.Citizen)
+				.FirstOrDefaultAsync(m => m.RequestID == id);
+
+			if (serviceRequest == null) return NotFound();
+
+			return View(serviceRequest);
+		}
+
+		// POST: ServiceRequests/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(int id)
+		{
+			var serviceRequest = await _context.ServiceRequests.FindAsync(id);
+			if (serviceRequest != null)
+			{
+				_context.ServiceRequests.Remove(serviceRequest);
+				await _context.SaveChangesAsync();
+				TempData["SuccessMessage"] = "Service request deleted successfully!";
+			}
+			return RedirectToAction(nameof(Index));
 		}
 
 		// Helper method to check if a service request exists

@@ -3,19 +3,90 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <div class="jumbotron bg-light p-5 shadow-lg rounded">
-        <h1 class="display-4 text-primary">Welcome to the Municipality Management System</h1>
-        <p class="lead">
-            Our system helps manage citizens, service requests, reports, and staff, ensuring
-            an efficient and well-organized municipality.
-        </p>
-        <hr class="my-4">
-        <p>
-            Get started by exploring our features and services.
-        </p>
-        <a class="btn btn-success btn-lg" asp-controller="ServiceRequests" asp-action="Index">
-            <i class="bi bi-clipboard-check"></i> View Service Requests
-        </a>
+<div class="container mt-5">
+    <div class="jumbotron">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5">Welcome to Municipality Management System</h1>
+                <p class="lead mt-3">
+                    Efficient, secure, and transparent management of municipal operations. Manage citizens, service requests, staff, and generate comprehensive reports all in one place.
+                </p>
+                <p class="text-secondary">
+                    A modern digital platform designed for South African municipalities to streamline city administration and improve public service delivery.
+                </p>
+                <hr class="my-4">
+                <a class="btn btn-primary btn-lg me-3" asp-controller="ServiceRequests" asp-action="Index" role="button">
+                    <i class="bi bi-clipboard-check"></i> View Service Requests
+                </a>
+                <a class="btn btn-secondary btn-lg" asp-controller="Citizens" asp-action="Index" role="button">
+                    <i class="bi bi-people"></i> Manage Citizens
+                </a>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-building" style="font-size: 6rem; color: #002395; opacity: 0.7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 mb-5">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-people" style="font-size: 2rem; color: #002395;"></i>
+                        <h5 class="card-title ms-3 mb-0">Citizen Management</h5>
+                    </div>
+                    <p class="card-text text-secondary">
+                        Create, update, and manage citizen records with comprehensive details including contact information and registration dates.
+                    </p>
+                    <a asp-controller="Citizens" asp-action="Index" class="text-primary fw-500">Manage Citizens →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-clipboard-check" style="font-size: 2rem; color: #007A4D;"></i>
+                        <h5 class="card-title ms-3 mb-0">Service Requests</h5>
+                    </div>
+                    <p class="card-text text-secondary">
+                        Track and manage all citizen service requests with status updates. Improve response times and service delivery efficiency.
+                    </p>
+                    <a asp-controller="ServiceRequests" asp-action="Index" class="text-primary fw-500">View Requests →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-briefcase" style="font-size: 2rem; color: #C9A227;"></i>
+                        <h5 class="card-title ms-3 mb-0">Staff Directory</h5>
+                    </div>
+                    <p class="card-text text-secondary">
+                        Maintain a comprehensive database of municipal staff with department assignments, positions, and contact information.
+                    </p>
+                    <a asp-controller="Staff" asp-action="Index" class="text-primary fw-500">View Staff →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="bi bi-file-earmark-text" style="font-size: 2rem; color: #C53030;"></i>
+                        <h5 class="card-title ms-3 mb-0">Reports</h5>
+                    </div>
+                    <p class="card-text text-secondary">
+                        Generate and track comprehensive reports related to citizens and municipal operations for data-driven decision making.
+                    </p>
+                    <a asp-controller="Reports" asp-action="Index" class="text-primary fw-500">View Reports →</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

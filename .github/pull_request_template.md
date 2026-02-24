@@ -1,62 +1,52 @@
 ## Description
 
-Please include a summary of the changes and the related issue.
+Brief summary of the changes.
 
 **Type of change**:
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to change)
-- [ ] Documentation update
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation
 
 ## Related Issue
 
 Closes #(issue number)
 
-## Changes Made
+## Changes
 
 - Change 1
 - Change 2
-- Change 3
 
-## Testing Performed
+## Testing
 
-Please describe the tests you ran and how to reproduce them:
+Steps to test:
 
-1. Navigate to...
-2. Click on...
+1. Go to...
+2. Click...
 3. Verify...
 
-**Test Coverage**:
-- [ ] Tested locally with `dotnet run`
-- [ ] Tested all CRUD operations
+**Tested**:
+- [ ] Ran locally
+- [ ] Tested CRUD operations
 - [ ] Tested error handling
-- [ ] Tested form validation
-- [ ] Tested in development environment
+- [ ] Tested validation
 
-## Screenshots (if applicable)
+## Screenshots
 
-If this PR includes UI changes, please include before/after screenshots.
+If UI changed, add before/after screenshots.
 
 ## Checklist
 
-- [ ] My code follows the code style guidelines in [CONTRIBUTING.md](CONTRIBUTING.md)
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas
-- [ ] I have made corresponding changes to the documentation (README, etc.)
-- [ ] I have added all required XML documentation comments
-- [ ] I have tested my changes thoroughly
-- [ ] No new warnings have been generated
-- [ ] My commit messages are clear and follow the guidelines
-- [ ] I have not committed sensitive information or personal data
+- [ ] Code follows style guide
+- [ ] Self-reviewed
+- [ ] Added comments where needed
+- [ ] Updated docs
+- [ ] Tested thoroughly
+- [ ] No sensitive data committed
 
 ## Breaking Changes
 
-Does this PR introduce any breaking changes?
-- [ ] No
-- [ ] Yes (describe below)
-
-If yes, please describe the breaking changes and migration path:
-
-## Additional Notes
+- [ ] No breaking changes
+- [ ] Has breaking changes (describe below)
 
 Add any other context here.

@@ -2,73 +2,59 @@
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue)](https://dotnet.microsoft.com/download)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-A modern, full-featured ASP.NET Core 10.0 MVC web application for managing municipality operations including citizens, service requests, staff, and reports.
+An ASP.NET Core 10.0 MVC web application for managing municipality operations. Tracks citizens, service requests, staff, and reports.
 
-## ✨ Features
+## Features
 
-- **Citizen Management** — Create, read, update, and delete citizen records with validation and registration metadata
-- **Service Request Tracking** — Manage citizen service requests with full CRUD and status tracking
-- **Staff Directory** — Maintain a database of municipality staff with departments and positions
-- **Reports Management** — Generate and track reports linked to citizens
-- **Responsive UI** — Bootstrap 5 powered responsive design with centralized alerts and feedback system
-- **Comprehensive Error Handling** — Global exception handling, logging, and friendly error pages
-- **Security Features** — Security headers (HSTS, X-Frame-Options, X-XSS-Protection), HTTPS redirection, antiforgery tokens
-- **Database Integration** — SQL Server with Entity Framework Core for modern data persistence
+- **Citizen Management** - Create, edit, and manage citizen records with contact details and registration dates
+- **Service Requests** - Track service requests with status updates and citizen assignments
+- **Staff Directory** - Maintain staff records with department and position information
+- **Reports** - Generate and manage reports linked to citizens
+- **Error Handling** - Global exception handling with user-friendly error pages and logging
+- **Security** - HTTPS redirection, security headers, CSRF protection, and environment-based configuration
 
-## 🛠️ Technology Stack
+## Tech Stack
 
-| Component | Technology |
-|-----------|-----------|
-| **Runtime** | ASP.NET Core 10.0 |
-| **Language** | C# with nullable reference types |
-| **Database** | SQL Server (with Entity Framework Core 9.0) |
-| **Frontend** | Bootstrap 5, HTML5, CSS3 |
-| **Architecture** | MVC (Model-View-Controller) |
+- **Framework**: ASP.NET Core 10.0 (MVC)
+- **Language**: C# (nullable reference types enabled)
+- **Database**: SQL Server with Entity Framework Core 9.0
+- **Frontend**: Bootstrap 5, HTML5, CSS3
+- **Icons**: Bootstrap Icons
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 MunicipalityManagementSystem/
-├── Controllers/              # MVC controllers (Home, Citizens, ServiceRequests, Staff, Reports)
-├── Models/                   # Domain models (Citizen, ServiceRequest, Staff, Report)
-├── Data/                     # ApplicationDbContext and EF Core configuration
-├── Views/
-│   ├── Citizens/             # CRUD views for citizens
-│   ├── ServiceRequests/       # CRUD views for service requests
-│   ├── Staff/                # CRUD views for staff
-│   ├── Reports/              # CRUD views for reports
-│   ├── Home/                 # Home, About, Contact, Error views
-│   └── Shared/               # Shared layout and partials
-├── wwwroot/                  # Static assets (CSS, JS, images)
-├── Migrations/               # EF Core database migrations
-├── Properties/               # Launch settings and configuration
-├── appsettings.json          # Application configuration
-├── Program.cs                # Startup configuration, middleware, services
-└── MuncipalityManagementSystem.csproj  # Project file
+├── Controllers/        # MVC controllers
+├── Models/            # Domain models
+├── Data/              # DbContext and database configuration
+├── Views/             # Razor views
+├── Migrations/        # EF Core migrations
+├── wwwroot/           # Static files (CSS, JS, images)
+├── Properties/        # Launch settings
+├── Program.cs         # App startup and middleware
+└── appsettings.json   # Configuration
 ```
 
-## 🚀 Quick Start
+## Getting Started
 
-### Prerequisites
+### Requirements
 
-- **.NET SDK 10.0** or later ([download](https://dotnet.microsoft.com/download))
-- **SQL Server** (Express or full edition)
-- **Git** for version control
+- .NET SDK 10.0 or later
+- SQL Server (Express or full version)
+- Git
 
-### Installation & Setup
+### Setup
 
-1. **Clone the repository**
+1. Clone the repository:
 
    ```bash
    git clone <repository-url>
    cd MunicipalityManagementSystem
    ```
 
-2. **Configure database connection**
-
-   Edit `appsettings.json` and update the connection string:
+2. Update the database connection string in `appsettings.json`:
 
    ```json
    "ConnectionStrings": {
@@ -78,116 +64,107 @@ MunicipalityManagementSystem/
 
    Replace `YOUR_SERVER` with your SQL Server instance name.
 
-3. **Apply Entity Framework migrations**
+3. Run migrations to create the database:
 
    ```bash
    dotnet ef database update
    ```
 
-4. **Run the application**
+4. Start the application:
 
    ```bash
    dotnet run
    ```
 
-   The application will open automatically in your default browser. The default URLs are:
-   - **HTTP**: `http://localhost:5284`
-   - **HTTPS**: `https://localhost:7080`
+5. Open your browser and navigate to:
+   - HTTPS: `https://localhost:7080`
+   - HTTP: `http://localhost:5284`
 
-## 📖 Usage
+## Usage
 
-### Navigation
+The app has five main sections accessible from the navigation bar:
 
-- **Home** — Dashboard and system overview
-- **Citizens** — Manage citizen records, view registration details
-- **Service Requests** — Track and manage service requests from citizens
-- **Staff** — View and manage municipality staff directory
-- **Reports** — Create and track reports
+- **Home** - Landing page with overview
+- **Citizens** - Manage citizen records
+- **Service Requests** - Track requests with status and assignment
+- **Staff** - View and edit staff directory
+- **Reports** - Create and view reports
 
-### Key Features
+All forms include validation. Success and error messages appear as dismissible alerts at the top of each page.
 
-- **Validation** — All forms include client and server-side validation
-- **Alerts & Feedback** — TempData-driven success/error messages displayed in alerts
-- **Responsive Design** — Works seamlessly on desktop and mobile devices
-- **Error Handling** — Comprehensive global exception handling with friendly error pages
+## Development
 
-## 🔧 Development
+### Adding Features
 
-### Code Organization
+1. Fork the repo and create a feature branch
+2. Add your models to `Models/` and update `ApplicationDbContext.cs`
+3. Create a migration: `dotnet ef migrations add YourMigrationName`
+4. Apply the migration: `dotnet ef database update`
+5. Add controllers and views as needed
+6. Test your changes
+7. Submit a pull request
 
-- **Controllers** use dependency injection for logging and data access
-- **Models** use nullable reference types (`string?`) for null-safety
-- **Views** use Razor templating with Bootstrap 5 styling
-- **Database** managed through EF Core migrations
-
-### Development Workflow
-
-1. Create a new branch: `git checkout -b feature/AmazingFeature`
-2. Make your changes and test thoroughly
-3. Commit with clear messages: `git commit -m 'Add AmazingFeature'`
-4. Push to your branch: `git push origin feature/AmazingFeature`
-5. Open a Pull Request
-
-### Adding Database Migrations
+### Database Migrations
 
 ```bash
 # Create a new migration
-dotnet ef migrations add <MigrationName>
+dotnet ef migrations add MigrationName
 
-# Apply migrations to database
+# Apply migrations
 dotnet ef database update
 
-# Revert to previous migration
-dotnet ef database update <PreviousMigrationName>
+# Rollback to a specific migration
+dotnet ef database update PreviousMigrationName
 ```
 
-## 🐛 Troubleshooting
+## Configuration
 
-| Issue | Solution |
-|-------|----------|
-| **Database connection fails** | Verify connection string in `appsettings.json` and ensure SQL Server is running |
-| **Port conflicts** | Check configured ports in `Properties/launchSettings.json` |
-| **Migration issues** | Ensure database exists and run `dotnet ef database update` |
-| **HTTPS certificate errors** | Update certificate in `Properties/launchSettings.json` or use HTTP for development |
+The app uses environment-specific settings:
 
-## 🔐 Security
+- **Development**: Detailed logging, developer exception pages
+- **Production**: Error handler, HSTS, security headers
 
-This application implements industry best practices for security:
+Configuration files are in the root directory:
 
-- **HTTPS Redirection** — All requests redirected to HTTPS in production
-- **Security Headers** — Prevents clickjacking, MIME-type sniffing, and XSS attacks
-- **Antiforgery Tokens** — CSRF protection on all forms
-- **Null-Safety** — Nullable reference types enabled for compile-time null checking
-- **Environment-Based Configuration** — Sensitive data excluded from version control
-- **Logging** — Comprehensive logging for debugging and monitoring
+- `appsettings.json` - Base configuration
+- `appsettings.Development.json` - Development overrides (excluded from git)
 
-## 📝 Contributing
+## Security Notes
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for:
-- Code of conduct
-- How to report bugs
-- How to suggest enhancements
-- Pull request process
-- Coding standards and style guides
+This project follows standard security practices:
 
-## 📜 License
+- HTTPS redirection in production
+- Security headers (X-Frame-Options, X-Content-Type-Options, etc.)
+- CSRF tokens on forms
+- Logging for debugging and audit trails
+- Sensitive configuration excluded from version control
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for complete details.
+**Before committing**: Make sure `appsettings.Development.json` contains no sensitive data. The `.gitignore` file already excludes it.
 
-## 📧 Support
+## Troubleshooting
 
-If you encounter issues or have questions:
-- Check the [Troubleshooting](#-troubleshooting) section
-- Review [CONTRIBUTING.md](CONTRIBUTING.md)
-- Open an issue on GitHub with detailed information
+**Database connection fails**  
+Check your connection string in `appsettings.json` and verify SQL Server is running.
 
-## 🙏 Acknowledgments
+**Port already in use**  
+Change the ports in `Properties/launchSettings.json`.
 
-- Built with [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/)
-- UI powered by [Bootstrap 5](https://getbootstrap.com/)
-- Icons from [Bootstrap Icons](https://icons.getbootstrap.com/)
+**Migration errors**  
+Delete the database and run `dotnet ef database update` again. Or check if previous migrations need to be reverted first.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
+- Reporting bugs
+- Suggesting features
+- Submitting pull requests
+- Code style and standards
+
+## License
+
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Last Updated**: February 24, 2026  
-**Version**: 1.0.0
+**Version**: 1.0.0  
+**Last Updated**: February 24, 2026

@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MuncipalityManagementSystem.Data;
-using MuncipalityManagementSystem.Models;
+using MunicipalityManagementSystem.Data;
+using MunicipalityManagementSystem.Models;
 
-namespace MuncipalityManagementSystem.Controllers
+namespace MunicipalityManagementSystem.Controllers
 {
 	public class CitizensController : Controller
 	{

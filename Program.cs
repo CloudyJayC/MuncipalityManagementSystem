@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MuncipalityManagementSystem.Data;
+using MunicipalityManagementSystem.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

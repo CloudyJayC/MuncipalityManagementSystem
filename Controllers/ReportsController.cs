@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MuncipalityManagementSystem.Data;
-using MuncipalityManagementSystem.Models;
+using MunicipalityManagementSystem.Data;
+using MunicipalityManagementSystem.Models;
 
-namespace MuncipalityManagementSystem.Controllers
+namespace MunicipalityManagementSystem.Controllers
 {
 	public class ReportsController : Controller
 	{

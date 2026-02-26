@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace MuncipalityManagementSystem.Controllers
+namespace MunicipalityManagementSystem.Controllers
 {
 	public class HomeController : Controller
 	{

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using MuncipalityManagementSystem.Models;
+using MunicipalityManagementSystem.Models;
 
-namespace MuncipalityManagementSystem.Data
+namespace MunicipalityManagementSystem.Data
 {
 	public class ApplicationDbContext : DbContext
 	{

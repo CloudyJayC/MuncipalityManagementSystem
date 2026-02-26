@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MuncipalityManagementSystem.Migrations
+namespace MunicipalityManagementSystem.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

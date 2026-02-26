@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MuncipalityManagementSystem.Models
+namespace MunicipalityManagementSystem.Models
 {
 	[Table("Reports")]
 	public class Report

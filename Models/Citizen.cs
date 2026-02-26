@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace MuncipalityManagementSystem.Models
+namespace MunicipalityManagementSystem.Models
 {
 	public class Citizen
 	{

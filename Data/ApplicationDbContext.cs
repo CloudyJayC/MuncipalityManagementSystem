@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MunicipalityManagementSystem.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using MunicipalityManagementSystem.Models;
 
+
 namespace MunicipalityManagementSystem.Data
 {
-	public class ApplicationDbContext : DbContext
-	{
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    {
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 			: base(options)
 		{

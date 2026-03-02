@@ -1,16 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
 using MunicipalityManagementSystem.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MunicipalityManagementSystem.Controllers
 {
-	public class ServiceRequestsController : Controller
+    [Authorize]
+    public class ServiceRequestsController : Controller
 	{
 		private readonly ApplicationDbContext _context;
 

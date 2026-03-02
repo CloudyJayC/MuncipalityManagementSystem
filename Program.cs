@@ -1,5 +1,10 @@
+using MunicipalityManagementSystem.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
+using MunicipalityManagementSystem.Models;
+using MunicipalityManagementSystem.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,8 +25,30 @@ else
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configure Identity
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+	options.Password.RequireDigit = true;
+	options.Password.RequiredLength = 8;
+	options.Password.RequireUppercase = true;
+	options.Password.RequireNonAlphanumeric = false;
+	options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+// Configure authentication cookie paths for Identity
+builder.Services.ConfigureApplicationCookie(options => {
+	options.LoginPath = "/Identity/Account/Login";
+	options.LogoutPath = "/Identity/Account/Logout";
+	options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
+
+// Register email sender service
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
 // Configure MVC services with antiforgery
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery();
 
 var app = builder.Build();
@@ -76,11 +103,13 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // Configure authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Map controller routes
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();

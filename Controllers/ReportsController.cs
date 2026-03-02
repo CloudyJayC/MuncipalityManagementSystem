@@ -1,15 +1,17 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
 using MunicipalityManagementSystem.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MunicipalityManagementSystem.Controllers
 {
-	public class ReportsController : Controller
+    [Authorize]
+    public class ReportsController : Controller
 	{
 		private readonly ApplicationDbContext _context;
 

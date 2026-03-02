@@ -1,41 +1,58 @@
 # Municipality Management System
 
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue)](https://dotnet.microsoft.com/download)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-10.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![EF Core](https://img.shields.io/badge/EF_Core-10.0-orange)](https://docs.microsoft.com/en-us/ef/core/)
 
-An ASP.NET Core 10.0 MVC web application for managing municipality operations. Tracks citizens, service requests, staff, and reports.
+An ASP.NET Core 10.0 MVC web application for managing local municipality operations. Provides role-based access for administrators, staff, and citizens to manage service requests, citizen records, staff, and reports.
+
+---
 
 ## Features
 
-- **Citizen Management** - Create, edit, and manage citizen records with contact details and registration dates
-- **Service Requests** - Track service requests with status updates and citizen assignments
-- **Staff Directory** - Maintain staff records with department and position information
-- **Reports** - Generate and manage reports linked to citizens
-- **Error Handling** - Global exception handling with user-friendly error pages and logging
-- **Security** - HTTPS redirection, security headers, CSRF protection, and environment-based configuration
+- **Authentication** — Secure login and registration with ASP.NET Core Identity
+- **Role-Based Access** — Admin, Staff, and Citizen roles with appropriate permissions
+- **Citizen Management** — Create, edit, and manage citizen records with contact details
+- **Service Requests** — Submit, track, and manage service requests with status updates
+- **Staff Directory** — Maintain staff records with department and position information
+- **Reports** — Create and manage reports linked to citizen records
+- **Security** — HTTPS, security headers, CSRF protection, and environment-based configuration
+- **Error Handling** — Global exception handling with user-friendly error pages and logging
+
+---
 
 ## Tech Stack
 
-- **Framework**: ASP.NET Core 10.0 (MVC)
-- **Language**: C# (nullable reference types enabled)
-- **Database**: SQL Server with Entity Framework Core 9.0
-- **Frontend**: Bootstrap 5, HTML5, CSS3
-- **Icons**: Bootstrap Icons
+| Layer | Technology |
+|---|---|
+| Framework | ASP.NET Core 10.0 (MVC) |
+| Language | C# with nullable reference types |
+| Auth | ASP.NET Core Identity |
+| Database | SQL Server + Entity Framework Core 10.0 |
+| Frontend | Bootstrap 5, HTML5, CSS3 |
+| Icons | Bootstrap Icons |
+
+---
 
 ## Project Structure
 
 ```
 MunicipalityManagementSystem/
-├── Controllers/        # MVC controllers
-├── Models/            # Domain models
-├── Data/              # DbContext and database configuration
-├── Views/             # Razor views
-├── Migrations/        # EF Core migrations
-├── wwwroot/           # Static files (CSS, JS, images)
-├── Properties/        # Launch settings
-├── Program.cs         # App startup and middleware
-└── appsettings.json   # Configuration
+├── Areas/
+│   └── Identity/           # Scaffolded Identity UI (Login, Register, Logout)
+├── Controllers/            # MVC controllers
+├── Data/                   # DbContext and database configuration
+├── Migrations/             # EF Core migrations
+├── Models/                 # Domain models + ApplicationUser
+├── Views/                  # Razor views
+├── wwwroot/                # Static files (CSS, JS)
+├── Properties/             # Launch settings
+├── Program.cs              # App startup and middleware
+└── appsettings.json        # Configuration (connection string)
 ```
+
+---
 
 ## Getting Started
 
@@ -50,59 +67,72 @@ MunicipalityManagementSystem/
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd MunicipalityManagementSystem
+   git clone https://github.com/CloudyJayC/MuncipalityManagementSystem.git
+   cd MuncipalityManagementSystem
    ```
 
-2. Update the database connection string in `appsettings.json`:
+2. Add your connection string. Create `appsettings.Development.json` in the root (this file is excluded from git):
 
    ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=YOUR_SERVER\\SQLEXPRESS;Database=MuncipalityDB;Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True"
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=YOUR_SERVER\\SQLEXPRESS;Database=MunicipalityDB;Trusted_Connection=True;MultipleActiveResultSets=True;TrustServerCertificate=True"
+     }
    }
    ```
 
    Replace `YOUR_SERVER` with your SQL Server instance name.
 
-3. Run migrations to create the database:
+3. Apply migrations to create the database:
 
    ```bash
    dotnet ef database update
    ```
 
-4. Start the application:
+4. Run the application:
 
    ```bash
    dotnet run
    ```
 
-5. Open your browser and navigate to:
+5. Open your browser:
    - HTTPS: `https://localhost:7080`
    - HTTP: `http://localhost:5284`
 
+6. Register an account to get started. The first Admin account is seeded automatically on startup.
+
+---
+
+## Roles
+
+| Role | Access |
+|---|---|
+| Admin | Full access — manages users, citizens, staff, service requests, reports |
+| Staff | Manages service requests and reports, views citizens |
+| Citizen | Submits and tracks their own service requests, manages their own profile |
+
+---
+
 ## Usage
 
-The app has five main sections accessible from the navigation bar:
+**Citizens** can register publicly, submit service requests, and track the status of their requests from their personal portal.
 
-- **Home** - Landing page with overview
-- **Citizens** - Manage citizen records
-- **Service Requests** - Track requests with status and assignment
-- **Staff** - View and edit staff directory
-- **Reports** - Create and view reports
+**Staff** can view all citizens, update service request statuses, and manage reports.
 
-All forms include validation. Success and error messages appear as dismissible alerts at the top of each page.
+**Admins** have full access to all modules and can manage user accounts and roles.
+
+---
 
 ## Development
 
 ### Adding Features
 
-1. Fork the repo and create a feature branch
-2. Add your models to `Models/` and update `ApplicationDbContext.cs`
+1. Create a feature branch from master
+2. Add models to `Models/` and update `ApplicationDbContext.cs`
 3. Create a migration: `dotnet ef migrations add YourMigrationName`
 4. Apply the migration: `dotnet ef database update`
 5. Add controllers and views as needed
-6. Test your changes
-7. Submit a pull request
+6. Test thoroughly before merging
 
 ### Database Migrations
 
@@ -113,58 +143,75 @@ dotnet ef migrations add MigrationName
 # Apply migrations
 dotnet ef database update
 
-# Rollback to a specific migration
+# Rollback to a previous migration
 dotnet ef database update PreviousMigrationName
 ```
+
+---
 
 ## Configuration
 
 The app uses environment-specific settings:
 
-- **Development**: Detailed logging, developer exception pages
-- **Production**: Error handler, HSTS, security headers
+- **Development** — Detailed logging, developer exception pages
+- **Production** — Error handler, HSTS, security headers
 
-Configuration files are in the root directory:
-
-- `appsettings.json` - Base configuration
-- `appsettings.Development.json` - Development overrides (excluded from git)
-
-## Security Notes
-
-This project follows standard security practices:
-
-- HTTPS redirection in production
-- Security headers (X-Frame-Options, X-Content-Type-Options, etc.)
-- CSRF tokens on forms
-- Logging for debugging and audit trails
-- Sensitive configuration excluded from version control
-
-**Before committing**: Make sure `appsettings.Development.json` contains no sensitive data. The `.gitignore` file already excludes it.
-
-## Troubleshooting
-
-**Database connection fails**  
-Check your connection string in `appsettings.json` and verify SQL Server is running.
-
-**Port already in use**  
-Change the ports in `Properties/launchSettings.json`.
-
-**Migration errors**  
-Delete the database and run `dotnet ef database update` again. Or check if previous migrations need to be reverted first.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
-- Reporting bugs
-- Suggesting features
-- Submitting pull requests
-- Code style and standards
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
+| File | Purpose |
+|---|---|
+| `appsettings.json` | Base configuration |
+| `appsettings.Development.json` | Local overrides — excluded from git |
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: February 24, 2026
+## Security
+
+- HTTPS redirection in production
+- Security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
+- CSRF tokens on all forms
+- ASP.NET Core Identity password hashing
+- No credentials committed to version control
+
+---
+
+## Troubleshooting
+
+**Database connection fails**
+Verify your connection string and confirm SQL Server is running.
+
+**Port already in use**
+Update the ports in `Properties/launchSettings.json`.
+
+**Migration errors**
+Check if a previous migration needs to be reverted first, or drop the database and re-run `dotnet ef database update`.
+
+**Login redirects to 404**
+Ensure `app.MapRazorPages()` is present in `Program.cs` after `app.MapControllerRoute()`.
+
+---
+
+## Roadmap
+
+- [x] Full CRUD for Citizens, Service Requests, Staff, Reports
+- [x] ASP.NET Core Identity authentication
+- [x] Role-based access (Admin, Staff, Citizen)
+- [ ] Citizen portal with personal dashboard
+- [ ] Service request status notifications
+- [ ] Admin dashboard with system statistics
+- [ ] Live deployment to Azure
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting bugs, suggesting features, and submitting pull requests.
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+**Version**: 1.1.0 — Authentication & Role-Based Access  
+**Last Updated**: March 2026

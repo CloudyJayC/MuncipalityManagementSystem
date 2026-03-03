@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,7 +24,8 @@ namespace MunicipalityManagementSystem.Models
 		[ForeignKey("Citizen")]
 		[Required(ErrorMessage = "Citizen selection is required")]
 		public int CitizenID { get; set; }
+        public string? UserId { get; set; }
 
-		public Citizen? Citizen { get; set; }
+        public Citizen? Citizen { get; set; }
 	}
 }

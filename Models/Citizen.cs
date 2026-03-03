@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace MunicipalityManagementSystem.Models
@@ -25,5 +25,6 @@ namespace MunicipalityManagementSystem.Models
 
 		[DataType(DataType.Date)]
 		public DateTime RegistrationDate { get; set; } = DateTime.Now;
-	}
+        public string? UserId { get; set; }
+    }
 }

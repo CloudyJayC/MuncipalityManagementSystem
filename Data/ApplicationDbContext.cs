@@ -18,8 +18,9 @@ namespace MunicipalityManagementSystem.Data
 		public DbSet<ServiceRequest> ServiceRequests { get; set; }
 		public DbSet<Staff> Staffs { get; set; }
 		public DbSet<Report> Reports { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			base.OnConfiguring(optionsBuilder);
 			optionsBuilder.ConfigureWarnings(w => 
@@ -34,6 +35,7 @@ namespace MunicipalityManagementSystem.Data
 			modelBuilder.Entity<ServiceRequest>().ToTable("ServiceRequests");
 			modelBuilder.Entity<Staff>().ToTable("Staffs");
 			modelBuilder.Entity<Report>().ToTable("Reports");
-		}
+            modelBuilder.Entity<Notification>().ToTable("Notifications");
+        }
 	}
 }

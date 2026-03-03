@@ -11,7 +11,7 @@ body:
       label: Prerequisites
       description: Please verify that you have checked the following before submitting an issue
       options:
-        - label: I have searched the [issue list](https://github.com/jwcam/MunicipalityManagementSystem/issues) to see if this issue is already reported
+        - label: I have searched the [issue list](https://github.com/CloudyJayC/MuncipalityManagementSystem/issues) to see if this issue is already reported
           required: true
         - label: I have verified that I am on the latest version of the application
           required: true

@@ -111,4 +111,43 @@ app.MapControllerRoute(
 	pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+// seeds the roles and default admin account
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    // This command creates roles if they do not exist in the database
+    string[] roles = { "Admin", "Staff", "Citizen" };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    //default admin account for testing purposes, should be removed later in production
+    string adminEmail = "admin@municipality.com";
+    string adminPassword = "Admin1234";
+
+    if (await userManager.FindByEmailAsync(adminEmail) == null)
+    {
+        var admin = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            FirstName = "System",
+            LastName = "Admin",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(admin, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Admin");
+        }
+    }
+}
+
 app.Run();

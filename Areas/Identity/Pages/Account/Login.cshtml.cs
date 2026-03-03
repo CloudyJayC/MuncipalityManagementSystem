@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -116,6 +116,24 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    if (user != null)
+                    {
+                        if (await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+                        {
+                            return RedirectToAction("Index", "Citizens");
+                        }
+                        else if (await _signInManager.UserManager.IsInRoleAsync(user, "Staff"))
+                        {
+                            return RedirectToAction("Index", "Citizens");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                    }
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -61,6 +61,7 @@
                         <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Staff" ? "active" : "")"
                            asp-controller="Staff" asp-action="Index">Staff</a>
                     </li>
+                    <partial name="_LoginPartial" />
                 </ul>
             </div>
         </div>

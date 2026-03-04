@@ -61,6 +61,15 @@
                         <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Staff" ? "active" : "")"
                            asp-controller="Staff" asp-action="Index">Staff</a>
                     </li>
+                    @if (User.IsInRole("Citizen"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CitizenPortal" ? "active" : "")"
+                               asp-controller="CitizenPortal" asp-action="Profile">
+                                <i class="bi bi-person-circle"></i> My Profile
+                            </a>
+                        </li>
+                    }
                     <partial name="_LoginPartial" />
                 </ul>
             </div>

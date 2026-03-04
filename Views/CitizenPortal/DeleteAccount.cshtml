@@ -1,0 +1,57 @@
+@model MunicipalityManagementSystem.Models.Citizen
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Delete Account";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Delete Account</h4>
+                </div>
+                <div class="card-body">
+
+                    <p class="lead">Are you sure you want to delete your account?</p>
+                    <p class="text-muted">This action is <strong>permanent and cannot be undone.</strong> Your login access will be removed immediately.</p>
+
+                    <table class="table table-bordered mt-3">
+                        <tr>
+                            <th>Full Name</th>
+                            <td>@Model.FullName</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Member Since</th>
+                            <td>@Model.RegistrationDate.ToString("yyyy/MM/dd")</td>
+                        </tr>
+                    </table>
+
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-info-circle"></i>
+                        Your citizen record and service request history will be preserved for administrative purposes.
+                    </div>
+
+                    <div class="d-flex mt-4">
+                        <form asp-action="DeleteAccount" method="post">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Yes, Delete My Account
+                            </button>
+                        </form>
+                        <a asp-action="Profile" class="btn btn-secondary ms-2">
+                            <i class="bi bi-arrow-left"></i> No, Go Back
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,106 @@
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model MunicipalityManagementSystem.Models.Citizen
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            {{-- Profile Card --}}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-person-circle"></i> My Profile</h4>
+                </div>
+                <div class="card-body">
+
+                    {{-- Read-only fields --}}
+                    <h6 class="text-muted mb-3">Account Information</h6>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Full Name</label>
+                            <p class="form-control-plaintext">@Model.FullName</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Email</label>
+                            <p class="form-control-plaintext">@Model.Email</p>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Date of Birth</label>
+                            <p class="form-control-plaintext">@Model.DateOfBirth?.ToString("yyyy/MM/dd")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Member Since</label>
+                            <p class="form-control-plaintext">@Model.RegistrationDate.ToString("yyyy/MM/dd")</p>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    {{-- Editable fields --}}
+                    <h6 class="text-muted mb-3">Contact & Address</h6>
+                    <form asp-action="Profile" method="post">
+                        <input type="hidden" name="CitizenID" value="@Model.CitizenID" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Street Name</label>
+                                <input type="text" name="streetName" value="@Model.StreetName" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Suburb</label>
+                                <input type="text" name="suburb" value="@Model.Suburb" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">City</label>
+                                <input type="text" name="city" value="@Model.City" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Postal Code</label>
+                                <input type="text" name="postalCode" value="@Model.PostalCode" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Phone Number</label>
+                                <input type="text" name="phoneNumber" value="@Model.PhoneNumber" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+
+            {{-- Danger Zone --}}
+            <div class="card border-danger shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Deleting your account is permanent and cannot be undone. Your citizen record will be kept for administrative purposes but your login access will be removed.</p>
+                    <a asp-action="DeleteAccount" class="btn btn-outline-danger">
+                        <i class="bi bi-trash"></i> Delete My Account
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,56 +1,84 @@
 @model MunicipalityManagementSystem.Models.ServiceRequest
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     ViewData["Title"] = "Create Service Request";
 }
 
 <div class="container mt-4">
     <div class="card shadow-sm p-4">
-        <h2 class="mb-4 text-primary">Create Service Request</h2>
+        <h2 class="mb-4 text-primary">
+            <i class="bi bi-plus-circle"></i> Create Service Request
+        </h2>
 
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <!-- Service Type -->
-            <div class="mb-3">
-                <label asp-for="ServiceType" class="form-label fw-bold">Service Type</label>
-                <input asp-for="ServiceType" class="form-control" placeholder="Enter service type" />
-                <span asp-validation-for="ServiceType" class="text-danger"></span>
-            </div>
+            @if (User.IsInRole("Citizen"))
+            {
+                @* Citizens: hidden CitizenID set from ViewData, Status locked to Pending *@
+                <input type="hidden" name="CitizenID" value="@ViewData["CitizenID"]" />
+                <input type="hidden" name="Status" value="Pending" />
 
-            <!-- Request Date -->
-            <div class="mb-3">
-                <label asp-for="RequestDate" class="form-label fw-bold">Request Date</label>
-                <input asp-for="RequestDate" type="date" class="form-control" />
-                <span asp-validation-for="RequestDate" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Service Type</label>
+                    <select asp-for="ServiceType" class="form-select">
+                        <option value="">-- Select a Service Type --</option>
+                        <option value="Water Supply">Water Supply</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Roads and Paving">Roads and Paving</option>
+                        <option value="Waste Collection">Waste Collection</option>
+                        <option value="Sewage and Drainage">Sewage and Drainage</option>
+                        <option value="Parks and Recreation">Parks and Recreation</option>
+                        <option value="Public Safety">Public Safety</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="ServiceType" class="text-danger"></span>
+                </div>
 
-            <!-- Status Dropdown -->
-            <div class="mb-3">
-                <label asp-for="Status" class="form-label fw-bold">Status</label>
-                <select asp-for="Status" class="form-select">
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Your request will be submitted with a <strong>Pending</strong> status. You can cancel it from your requests list if needed.
+                </div>
+            }
+            else
+            {
+                @* Admin/Staff: full form *@
+                <div class="mb-3">
+                    <label asp-for="ServiceType" class="form-label fw-bold">Service Type</label>
+                    <input asp-for="ServiceType" class="form-control" placeholder="Enter service type" />
+                    <span asp-validation-for="ServiceType" class="text-danger"></span>
+                </div>
 
-            <!-- Citizen Selection -->
-            <div class="mb-3">
-                <label asp-for="CitizenID" class="form-label fw-bold">Select Citizen</label>
-                <select asp-for="CitizenID" class="form-select" asp-items="ViewBag.CitizenID">
-                    <option value="">-- Select a Citizen --</option>
-                </select>
-                <span asp-validation-for="CitizenID" class="text-danger"></span>
-            </div>
+                <div class="mb-3">
+                    <label asp-for="RequestDate" class="form-label fw-bold">Request Date</label>
+                    <input asp-for="RequestDate" type="date" class="form-control" />
+                    <span asp-validation-for="RequestDate" class="text-danger"></span>
+                </div>
 
-            <!-- Buttons -->
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label fw-bold">Status</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CitizenID" class="form-label fw-bold">Select Citizen</label>
+                    <select asp-for="CitizenID" class="form-select" asp-items="ViewBag.CitizenID">
+                        <option value="">-- Select a Citizen --</option>
+                    </select>
+                    <span asp-validation-for="CitizenID" class="text-danger"></span>
+                </div>
+            }
+
             <div class="d-flex">
                 <button type="submit" class="btn btn-success">
-                    <i class="bi bi-plus-circle"></i> Create
+                    <i class="bi bi-plus-circle"></i> Submit Request
                 </button>
                 <a asp-action="Index" class="btn btn-secondary ms-2">
                     <i class="bi bi-arrow-left"></i> Back to List
@@ -59,3 +87,9 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("~/Areas/Identity/Pages/_ValidationScriptsPartial.cshtml");
+    }
+}

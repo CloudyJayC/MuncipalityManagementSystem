@@ -2,14 +2,14 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Service Requests Management";
+    ViewData["Title"] = "Service Requests";
 }
 
 <div class="container mt-4">
     <div class="row mb-4">
         <div class="col-md-8">
             <h1 class="mb-0">Service Requests</h1>
-            <p class="text-secondary mt-1">Track and manage all citizen service requests</p>
+            <p class="text-secondary mt-1">Track and manage citizen service requests</p>
         </div>
         <div class="col-md-4 text-end">
             <a asp-action="Create" class="btn btn-success">
@@ -34,7 +34,7 @@
                             <th>Service Type</th>
                             <th>Request Date</th>
                             <th>Status</th>
-                            <th>Citizen Address</th>
+                            <th>Citizen</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -45,31 +45,56 @@
                                 <td><strong>@item.ServiceType</strong></td>
                                 <td>@item.RequestDate.ToShortDateString()</td>
                                 <td>
-                                    @if (item.Status?.ToLower() == "completed")
-                                    {
-                                        <span class="badge badge-success">@item.Status</span>
+                                    @{
+                                        var badgeClass = item.Status?.ToLower() switch
+                                        {
+                                                            "completed" => "bg-success",
+                                                            "pending" => "bg-warning text-dark",
+                                                            "in progress" => "bg-primary",
+                                                            "cancelled" => "bg-secondary",
+                                            _ => "bg-light text-dark"
+                                        };
                                     }
-                                    else if (item.Status?.ToLower() == "pending")
-                                    {
-                                        <span class="badge badge-warning">@item.Status</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-secondary">@item.Status</span>
-                                    }
+                                    <span class="badge @badgeClass">@item.Status</span>
                                 </td>
-                                <td>@item.Citizen?.Address</td>
+                                <td>@item.Citizen?.FullName</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
-                                        <a asp-action="Details" asp-route-id="@item.RequestID" class="btn btn-sm btn-secondary" title="View details">
+
+                                        @* Everyone gets Details *@
+                                        <a asp-action="Details" asp-route-id="@item.RequestID"
+                                           class="btn btn-sm btn-outline-secondary" title="View details">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a asp-action="Edit" asp-route-id="@item.RequestID" class="btn btn-sm btn-primary" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.RequestID" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                                        {
+                                            @* Admin and Staff get Edit *@
+                                            <a asp-action="Edit" asp-route-id="@item.RequestID"
+                                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        }
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            @* Admin only gets Delete *@
+                                            <a asp-action="Delete" asp-route-id="@item.RequestID"
+                                               class="btn btn-sm btn-outline-danger" title="Delete"
+                                               onclick="return confirm('Are you sure you want to delete this request?');">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        }
+
+                                        @if (User.IsInRole("Citizen") && item.Status == "Pending")
+                                        {
+                                            @* Citizens can only cancel Pending requests *@
+                                            <a asp-action="Cancel" asp-route-id="@item.RequestID"
+                                               class="btn btn-sm btn-outline-warning" title="Cancel request">
+                                                <i class="bi bi-x-circle"></i>
+                                            </a>
+                                        }
+
                                     </div>
                                 </td>
                             </tr>

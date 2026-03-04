@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
 using MunicipalityManagementSystem.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,171 +13,260 @@ namespace MunicipalityManagementSystem.Controllers
 {
     [Authorize]
     public class ServiceRequestsController : Controller
-	{
-		private readonly ApplicationDbContext _context;
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-		public ServiceRequestsController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
+        public ServiceRequestsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
 
-		// GET: ServiceRequests
-		public async Task<IActionResult> Index()
-		{
-			var applicationDbContext = _context.ServiceRequests.Include(s => s.Citizen);
-			return View(await applicationDbContext.ToListAsync());
-		}
+        // GET: ServiceRequests
+        public async Task<IActionResult> Index()
+        {
+            var query = _context.ServiceRequests.Include(s => s.Citizen).AsQueryable();
 
-		// GET: ServiceRequests/Details/5
-		public async Task<IActionResult> Details(int? id)
-		{
-			if (id == null) return NotFound();
+            // Citizens only see their own requests
+            if (User.IsInRole("Citizen"))
+            {
+                var userId = _userManager.GetUserId(User);
+                query = query.Where(s => s.UserId == userId);
+            }
 
-			var serviceRequest = await _context.ServiceRequests
-				.Include(s => s.Citizen)
-				.FirstOrDefaultAsync(m => m.RequestID == id);
+            return View(await query.ToListAsync());
+        }
 
-			if (serviceRequest == null) return NotFound();
+        // GET: ServiceRequests/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
 
-			return View(serviceRequest);
-		}
+            var serviceRequest = await _context.ServiceRequests
+                .Include(s => s.Citizen)
+                .FirstOrDefaultAsync(m => m.RequestID == id);
 
-		// GET: ServiceRequests/Create
-		public IActionResult Create()
-		{
-			ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName");
-			return View();
-		}
+            if (serviceRequest == null) return NotFound();
 
-		// POST: ServiceRequests/Create
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create(ServiceRequest serviceRequest)
-		{
-			if (!ModelState.IsValid)
-			{
-				// Capture validation errors and display them in the view
-				foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-				{
-					ModelState.AddModelError("", error.ErrorMessage);
-				}
+            // Citizens can only view their own requests
+            if (User.IsInRole("Citizen"))
+            {
+                var userId = _userManager.GetUserId(User);
+                if (serviceRequest.UserId != userId) return Forbid();
+            }
 
-				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
-				return View(serviceRequest);
-			}
+            return View(serviceRequest);
+        }
 
-			try
-			{
-				// Ensure RequestDate is properly set
-				if (serviceRequest.RequestDate == DateTime.MinValue)
-				{
-					serviceRequest.RequestDate = DateTime.Now;
-				}
+        // GET: ServiceRequests/Create
+        public async Task<IActionResult> Create()
+        {
+            if (User.IsInRole("Citizen"))
+            {
+                var userId = _userManager.GetUserId(User);
+                var citizen = await _context.Citizens.FirstOrDefaultAsync(c => c.UserId == userId);
 
-				_context.Add(serviceRequest);
-				await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "Service request created successfully!";
-				return RedirectToAction(nameof(Index));
-			}
-			catch (Exception ex)
-			{
-				// Log the error and show it in the UI
-				ModelState.AddModelError("", "An error occurred while saving the request: " + ex.Message);
-				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
-				return View(serviceRequest);
-			}
-		}
+                if (citizen == null)
+                {
+                    TempData["ErrorMessage"] = "No citizen profile found for your account.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-		// GET: ServiceRequests/Edit/5
-		public async Task<IActionResult> Edit(int? id)
-		{
-			if (id == null) return NotFound();
+                // Pass CitizenID to view so it can be stored in a hidden field
+                ViewData["CitizenID"] = citizen.CitizenID;
+                return View();
+            }
 
-			var serviceRequest = await _context.ServiceRequests.FindAsync(id);
-			if (serviceRequest == null) return NotFound();
+            // Admin/Staff see the full citizen dropdown
+            ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName");
+            return View();
+        }
 
-			ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
-			return View(serviceRequest);
-		}
+        // POST: ServiceRequests/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ServiceRequest serviceRequest)
+        {
+            // Citizens: override CitizenID and UserId server-side (never trust the form)
+            if (User.IsInRole("Citizen"))
+            {
+                var userId = _userManager.GetUserId(User);
+                var citizen = await _context.Citizens.FirstOrDefaultAsync(c => c.UserId == userId);
 
-		// POST: ServiceRequests/Edit/5
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, ServiceRequest serviceRequest)
-		{
-			if (id != serviceRequest.RequestID) return NotFound();
+                if (citizen == null)
+                {
+                    TempData["ErrorMessage"] = "No citizen profile found for your account.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-			if (!ModelState.IsValid)
-			{
-				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
-				return View(serviceRequest);
-			}
+                serviceRequest.CitizenID = citizen.CitizenID;
+                serviceRequest.UserId = userId;
 
-			try
-			{
-				// Ensure RequestDate is properly set
-				if (serviceRequest.RequestDate == DateTime.MinValue)
-				{
-					serviceRequest.RequestDate = DateTime.Now;
-				}
+                // Clear any validation errors that were raised before we set these
+                ModelState.Remove("CitizenID");
+                ModelState.Remove("UserId");
+            }
 
-				_context.Update(serviceRequest);
-				await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "Service request updated successfully!";
-				return RedirectToAction(nameof(Index));
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!ServiceRequestExists(serviceRequest.RequestID))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", "An error occurred while updating the request: " + ex.Message);
-				ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
-				return View(serviceRequest);
-			}
-		}
+            if (!ModelState.IsValid)
+            {
+                if (User.IsInRole("Citizen"))
+                {
+                    var userId = _userManager.GetUserId(User);
+                    var citizen = await _context.Citizens.FirstOrDefaultAsync(c => c.UserId == userId);
+                    ViewData["CitizenID"] = citizen?.CitizenID;
+                }
+                else
+                {
+                    ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+                }
+                return View(serviceRequest);
+            }
 
-		// GET: ServiceRequests/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-		{
-			if (id == null) return NotFound();
+            if (serviceRequest.RequestDate == DateTime.MinValue)
+                serviceRequest.RequestDate = DateTime.Now;
 
-			var serviceRequest = await _context.ServiceRequests
-				.Include(s => s.Citizen)
-				.FirstOrDefaultAsync(m => m.RequestID == id);
+            // If UserId wasn't set (Admin/Staff creating on behalf of a citizen), look it up
+            if (string.IsNullOrEmpty(serviceRequest.UserId))
+            {
+                var citizen = await _context.Citizens.FirstOrDefaultAsync(c => c.CitizenID == serviceRequest.CitizenID);
+                serviceRequest.UserId = citizen?.UserId;
+            }
 
-			if (serviceRequest == null) return NotFound();
+            _context.Add(serviceRequest);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Service request created successfully!";
+            return RedirectToAction(nameof(Index));
+        }
 
-			return View(serviceRequest);
-		}
+        // GET: ServiceRequests/Cancel/5  (Citizens only — Pending → Cancelled)
+        [Authorize(Roles = "Citizen")]
+        public async Task<IActionResult> Cancel(int? id)
+        {
+            if (id == null) return NotFound();
 
-		// POST: ServiceRequests/Delete/5
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
-		{
-			var serviceRequest = await _context.ServiceRequests.FindAsync(id);
-			if (serviceRequest != null)
-			{
-				_context.ServiceRequests.Remove(serviceRequest);
-				await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "Service request deleted successfully!";
-			}
-			return RedirectToAction(nameof(Index));
-		}
+            var serviceRequest = await _context.ServiceRequests
+                .Include(s => s.Citizen)
+                .FirstOrDefaultAsync(m => m.RequestID == id);
 
-		// Helper method to check if a service request exists
-		private bool ServiceRequestExists(int id)
-		{
-			return _context.ServiceRequests.Any(e => e.RequestID == id);
-		}
-	}
+            if (serviceRequest == null) return NotFound();
+
+            var userId = _userManager.GetUserId(User);
+            if (serviceRequest.UserId != userId) return Forbid();
+
+            if (serviceRequest.Status != "Pending")
+            {
+                TempData["ErrorMessage"] = "Only Pending requests can be cancelled.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(serviceRequest);
+        }
+
+        // POST: ServiceRequests/Cancel/5
+        [HttpPost, ActionName("Cancel")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Citizen")]
+        public async Task<IActionResult> CancelConfirmed(int id)
+        {
+            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
+
+            if (serviceRequest == null) return NotFound();
+
+            var userId = _userManager.GetUserId(User);
+            if (serviceRequest.UserId != userId) return Forbid();
+
+            if (serviceRequest.Status != "Pending")
+            {
+                TempData["ErrorMessage"] = "Only Pending requests can be cancelled.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            serviceRequest.Status = "Cancelled";
+            _context.Update(serviceRequest);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Your service request has been cancelled.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: ServiceRequests/Edit/5  (Admin/Staff only)
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
+            if (serviceRequest == null) return NotFound();
+
+            ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+            return View(serviceRequest);
+        }
+
+        // POST: ServiceRequests/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Staff")]
+        public async Task<IActionResult> Edit(int id, ServiceRequest serviceRequest)
+        {
+            if (id != serviceRequest.RequestID) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                ViewData["CitizenID"] = new SelectList(_context.Citizens, "CitizenID", "FullName", serviceRequest.CitizenID);
+                return View(serviceRequest);
+            }
+
+            try
+            {
+                if (serviceRequest.RequestDate == DateTime.MinValue)
+                    serviceRequest.RequestDate = DateTime.Now;
+
+                _context.Update(serviceRequest);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Service request updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ServiceRequestExists(serviceRequest.RequestID)) return NotFound();
+                throw;
+            }
+        }
+
+        // GET: ServiceRequests/Delete/5  (Admin only)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var serviceRequest = await _context.ServiceRequests
+                .Include(s => s.Citizen)
+                .FirstOrDefaultAsync(m => m.RequestID == id);
+
+            if (serviceRequest == null) return NotFound();
+
+            return View(serviceRequest);
+        }
+
+        // POST: ServiceRequests/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
+            if (serviceRequest != null)
+            {
+                _context.ServiceRequests.Remove(serviceRequest);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Service request deleted successfully!";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool ServiceRequestExists(int id)
+        {
+            return _context.ServiceRequests.Any(e => e.RequestID == id);
+        }
+    }
 }

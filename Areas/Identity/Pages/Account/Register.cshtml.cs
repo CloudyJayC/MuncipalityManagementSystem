@@ -75,45 +75,72 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            [Required]
-            [StringLength(50, MinimumLength = 2)]
+            [Required(ErrorMessage = "First name is required")]
+            [StringLength(50, MinimumLength = 2, ErrorMessage = "First name must be between 2 and 50 characters")]
+            [RegularExpression(@"^[a-zA-Z\s'-]+$", ErrorMessage = "First name can only contain letters, spaces, hyphens, and apostrophes")]
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
-            [Required]
-            [StringLength(50, MinimumLength = 2)]
+            [Required(ErrorMessage = "Last name is required")]
+            [StringLength(50, MinimumLength = 2, ErrorMessage = "Last name must be between 2 and 50 characters")]
+            [RegularExpression(@"^[a-zA-Z\s'-]+$", ErrorMessage = "Last name can only contain letters, spaces, hyphens, and apostrophes")]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessage = "Email is required")]
+            [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+            [StringLength(255, ErrorMessage = "Email cannot exceed 255 characters")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
-            [Required]
-            [StringLength(255, MinimumLength = 5)]
-            [Display(Name = "Address")]
-            public string Address { get; set; }
+            // Address Fields - Split
+            [Required(ErrorMessage = "Street name is required")]
+            [StringLength(100, MinimumLength = 5, ErrorMessage = "Street name must be between 5 and 100 characters")]
+            [RegularExpression(@"^[a-zA-Z0-9\s,.\-#]+$", ErrorMessage = "Street name can only contain letters, numbers, and common punctuation")]
+            [Display(Name = "Street Name")]
+            public string StreetName { get; set; }
 
-            [Required]
-            [StringLength(20, MinimumLength = 10)]
+            [Required(ErrorMessage = "Suburb is required")]
+            [StringLength(100, MinimumLength = 2, ErrorMessage = "Suburb must be between 2 and 100 characters")]
+            [RegularExpression(@"^[a-zA-Z\s'-]+$", ErrorMessage = "Suburb can only contain letters, spaces, hyphens, and apostrophes")]
+            [Display(Name = "Suburb")]
+            public string Suburb { get; set; }
+
+            [Required(ErrorMessage = "City is required")]
+            [StringLength(100, MinimumLength = 2, ErrorMessage = "City must be between 2 and 100 characters")]
+            [RegularExpression(@"^[a-zA-Z\s'-]+$", ErrorMessage = "City can only contain letters, spaces, hyphens, and apostrophes")]
+            [Display(Name = "City")]
+            public string City { get; set; }
+
+            [Required(ErrorMessage = "Postal code is required")]
+            [StringLength(10, MinimumLength = 4, ErrorMessage = "Postal code must be between 4 and 10 characters")]
+            [RegularExpression(@"^[0-9]{4,10}$", ErrorMessage = "Postal code can only contain numbers")]
+            [Display(Name = "Postal Code")]
+            public string PostalCode { get; set; }
+
+            [Required(ErrorMessage = "Phone number is required")]
+            [StringLength(20, MinimumLength = 10, ErrorMessage = "Phone number must be between 10 and 20 characters")]
+            [RegularExpression(@"^(\+27|0)[0-9\s\-()]+$", ErrorMessage = "Please enter a valid South African phone number (start with +27 or 0)")]
             [Display(Name = "Phone Number")]
-            [Phone]
             public string PhoneNumber { get; set; }
 
-            [Display(Name = "Date of Birth")]
+            [Required(ErrorMessage = "Date of birth is required")]
             [DataType(DataType.Date)]
-            public DateTime? DateOfBirth { get; set; }
+            [Display(Name = "Date of Birth")]
+            [AgeValidation(16, ErrorMessage = "You must be at least 16 years old to register")]
+            public DateTime DateOfBirth { get; set; }
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessage = "Password is required")]
+            [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters long")]
+            [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$",
+                ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)")]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Confirm Password")]
+            [Compare("Password", ErrorMessage = "Password and confirmation password do not match")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -148,7 +175,10 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
                     {
                         FullName = $"{Input.FirstName} {Input.LastName}",
                         Email = Input.Email,
-                        Address = Input.Address,
+                        StreetName = Input.StreetName,
+                        Suburb = Input.Suburb,
+                        City = Input.City,
+                        PostalCode = Input.PostalCode,
                         PhoneNumber = Input.PhoneNumber,
                         DateOfBirth = Input.DateOfBirth,
                         UserId = user.Id,
@@ -210,6 +240,43 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
+        }
+    }
+
+    /// <summary>
+    /// Custom validation attribute to ensure user is at least 16 years old
+    /// </summary>
+    public class AgeValidationAttribute : ValidationAttribute
+    {
+        private readonly int _minimumAge;
+
+        public AgeValidationAttribute(int minimumAge)
+        {
+            _minimumAge = minimumAge;
+        }
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            if (value is DateTime dateOfBirth)
+            {
+                var today = DateTime.Today;
+                var age = today.Year - dateOfBirth.Year;
+
+                // Check if birthday hasn't occurred this year yet
+                if (dateOfBirth.Date > today.AddYears(-age))
+                {
+                    age--;
+                }
+
+                if (age < _minimumAge)
+                {
+                    return new ValidationResult(
+                        $"You must be at least {_minimumAge} years old to register",
+                        new[] { validationContext.MemberName });
+                }
+            }
+
+            return ValidationResult.Success;
         }
     }
 }

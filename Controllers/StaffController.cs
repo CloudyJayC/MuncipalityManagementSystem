@@ -46,6 +46,7 @@ namespace MunicipalityManagementSystem.Controllers
         }
 
         // GET: Staff/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +55,7 @@ namespace MunicipalityManagementSystem.Controllers
         // POST: Staff/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
         {
             if (ModelState.IsValid)
@@ -74,6 +76,7 @@ namespace MunicipalityManagementSystem.Controllers
         }
 
         // GET: Staff/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,6 +95,7 @@ namespace MunicipalityManagementSystem.Controllers
         // POST: Staff/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("StaffID,FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
         {
             if (id != staff.StaffID)
@@ -124,6 +128,7 @@ namespace MunicipalityManagementSystem.Controllers
         }
 
         // GET: Staff/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,6 +149,7 @@ namespace MunicipalityManagementSystem.Controllers
         // POST: Staff/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var staff = await _context.Staffs.FindAsync(id);

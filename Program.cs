@@ -148,6 +148,27 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(admin, "Admin");
         }
     }
+    //default staff account for testing purposes, should be removed later in production
+    string staffEmail = "staff@municipality.com";
+    string staffPassword = "Staff1234!";
+
+    if (await userManager.FindByEmailAsync(staffEmail) == null)
+    {
+        var staff = new ApplicationUser
+        {
+            UserName = staffEmail,
+            Email = staffEmail,
+            FirstName = "Test",
+            LastName = "Staff",
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(staff, staffPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(staff, "Staff");
+        }
+    }
 }
 
 app.Run();

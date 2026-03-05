@@ -42,15 +42,17 @@ namespace MunicipalityManagementSystem.Controllers
 			return View(citizen);
 		}
 
-		// GET: Citizens/Create
-		public IActionResult Create()
-		{
-			return View();
-		}
+        // GET: Citizens/Create
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
+        {
+            return View();
+        }
 
-		// POST: Citizens/Create
-		[HttpPost]
-		[ValidateAntiForgeryToken]
+        // POST: Citizens/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("FullName,StreetName,Suburb,City,PostalCode,PhoneNumber,Email,DateOfBirth")] Citizen citizen)
         {
 			if (!ModelState.IsValid)
@@ -124,9 +126,10 @@ namespace MunicipalityManagementSystem.Controllers
 			}
 		}
 
-		// GET: Citizens/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-		{
+        // GET: Citizens/Delete/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
 			if (id == null)
 			{
 				return NotFound();
@@ -141,11 +144,12 @@ namespace MunicipalityManagementSystem.Controllers
 			return View(citizen);
 		}
 
-		// POST: Citizens/Delete/5
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
-		{
+        // POST: Citizens/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
 			var citizen = await _context.Citizens.FindAsync(id);
 			if (citizen != null)
 			{

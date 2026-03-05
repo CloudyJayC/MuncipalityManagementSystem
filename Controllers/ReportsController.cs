@@ -134,9 +134,10 @@ namespace MunicipalityManagementSystem.Controllers
 			return View(report);
 		}
 
-		// GET: Reports/Delete/5
-		public async Task<IActionResult> Delete(int? id)
-		{
+        // GET: Reports/Delete/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(int? id)
+        {
 			if (id == null)
 			{
 				return NotFound();
@@ -153,11 +154,12 @@ namespace MunicipalityManagementSystem.Controllers
 			return View(report);
 		}
 
-		// POST: Reports/Delete/5
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(int id)
-		{
+        // POST: Reports/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
 			var report = await _context.Reports.FindAsync(id);
 			if (report != null)
 			{

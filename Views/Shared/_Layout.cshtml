@@ -53,10 +53,13 @@
                         </li>
                     }
 
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ServiceRequests" ? "active" : "")"
-                           asp-controller="ServiceRequests" asp-action="Index">Service Requests</a>
-                    </li>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ServiceRequests" ? "active" : "")"
+                               asp-controller="ServiceRequests" asp-action="Index">Service Requests</a>
+                        </li>
+                    }
 
                     @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
                     {

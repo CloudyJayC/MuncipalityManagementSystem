@@ -26,7 +26,13 @@
             @if (!Model.Any())
             {
                 <div class="p-4 text-center">
-                    <p class="text-secondary mb-0">No citizens found. <a asp-action="Create">Create one now</a>.</p>
+                    <p class="text-secondary mb-0">
+                        No citizens found.
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-action="Create">Create one now</a>
+                        }
+                    </p>
                 </div>
             }
             else

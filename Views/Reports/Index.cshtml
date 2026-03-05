@@ -48,18 +48,16 @@
                                 <td><span class="text-secondary">@(item.Details?.Length > 50 ? item.Details.Substring(0, 50) + "..." : item.Details)</span></td>
                                 <td>@item.SubmissionDate.ToShortDateString()</td>
                                 <td>
-                                    @if (item.Status?.ToLower() == "completed")
-                                    {
-                                        <span class="badge badge-success">@item.Status</span>
+                                    @{
+                                        var reportBadgeClass = item.Status?.ToLower() switch
+                                        {
+                                            "resolved" => "bg-success text-white",
+                                            "under review" => "bg-warning text-dark",
+                                            "rejected" => "bg-danger text-white",
+                                            _ => "bg-secondary text-white"
+                                        };
                                     }
-                                    else if (item.Status?.ToLower() == "pending")
-                                    {
-                                        <span class="badge badge-warning">@item.Status</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-secondary">@item.Status</span>
-                                    }
+                                    <span class="badge @reportBadgeClass">@item.Status</span>
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">

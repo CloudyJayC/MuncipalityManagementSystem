@@ -45,22 +45,30 @@
                         <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
                            asp-controller="Home" asp-action="Contact">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Citizens" ? "active" : "")"
-                           asp-controller="Citizens" asp-action="Index">Citizens</a>
-                    </li>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Citizens" ? "active" : "")"
+                               asp-controller="Citizens" asp-action="Index">Citizens</a>
+                        </li>
+                    }
+
                     <li class="nav-item">
                         <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ServiceRequests" ? "active" : "")"
                            asp-controller="ServiceRequests" asp-action="Index">Service Requests</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
-                           asp-controller="Reports" asp-action="Index">Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Staff" ? "active" : "")"
-                           asp-controller="Staff" asp-action="Index">Staff</a>
-                    </li>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
+                               asp-controller="Reports" asp-action="Index">Reports</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Staff" ? "active" : "")"
+                               asp-controller="Staff" asp-action="Index">Staff</a>
+                        </li>
+                    }
                     @if (User.IsInRole("Citizen"))
                     {
                         <li class="nav-item">

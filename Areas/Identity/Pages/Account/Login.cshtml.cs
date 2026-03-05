@@ -126,7 +126,7 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
                         }
                         else if (await _signInManager.UserManager.IsInRoleAsync(user, "Staff"))
                         {
-                            return RedirectToAction("Index", "Citizens");
+                            return RedirectToAction("Dashboard", "StaffPortal");
                         }
                         else
                         {

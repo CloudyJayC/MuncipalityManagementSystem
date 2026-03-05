@@ -69,6 +69,15 @@
                                asp-controller="Staff" asp-action="Index">Staff</a>
                         </li>
                     }
+                    @if (User.IsInRole("Staff"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StaffPortal" ? "active" : "")"
+                               asp-controller="StaffPortal" asp-action="Dashboard">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                    }
                     @if (User.IsInRole("Citizen"))
                     {
                         <li class="nav-item">

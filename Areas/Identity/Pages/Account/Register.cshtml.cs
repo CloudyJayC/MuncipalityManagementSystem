@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MunicipalityManagementSystem.Data;
 using MunicipalityManagementSystem.Models;
@@ -170,21 +171,34 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
                     await _userManager.AddToRoleAsync(user, "Citizen");
 
-                    // Auto-create Citizen record with ALL details from registration
-                    var citizen = new Citizen
+                    // Check if a citizen record already exists with this email (created manually by Admin)
+                    var existingCitizen = await _context.Citizens
+                        .FirstOrDefaultAsync(c => c.Email == Input.Email);
+
+                    if (existingCitizen != null)
                     {
-                        FullName = $"{Input.FirstName} {Input.LastName}",
-                        Email = Input.Email,
-                        StreetName = Input.StreetName,
-                        Suburb = Input.Suburb,
-                        City = Input.City,
-                        PostalCode = Input.PostalCode,
-                        PhoneNumber = Input.PhoneNumber,
-                        DateOfBirth = Input.DateOfBirth,
-                        UserId = user.Id,
-                        RegistrationDate = DateTime.Now
-                    };
-                    _context.Citizens.Add(citizen);
+                        // Link the existing citizen record to this new user account
+                        existingCitizen.UserId = user.Id;
+                        _context.Citizens.Update(existingCitizen);
+                    }
+                    else
+                    {
+                        // No existing record — create a new one
+                        var citizen = new Citizen
+                        {
+                            FullName = $"{Input.FirstName} {Input.LastName}",
+                            Email = Input.Email,
+                            StreetName = Input.StreetName,
+                            Suburb = Input.Suburb,
+                            City = Input.City,
+                            PostalCode = Input.PostalCode,
+                            PhoneNumber = Input.PhoneNumber,
+                            DateOfBirth = Input.DateOfBirth,
+                            UserId = user.Id,
+                            RegistrationDate = DateTime.Now
+                        };
+                        _context.Citizens.Add(citizen);
+                    }
                     await _context.SaveChangesAsync();
 
                     var userId = await _userManager.GetUserIdAsync(user);

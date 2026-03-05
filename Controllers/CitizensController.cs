@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
@@ -12,15 +13,17 @@ namespace MunicipalityManagementSystem.Controllers
     [Authorize(Roles = "Admin,Staff")]
     public class CitizensController : Controller
     {
-		private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-		public CitizensController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
+        public CitizensController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
 
-		// GET: Citizens
-		public async Task<IActionResult> Index()
+        // GET: Citizens
+        public async Task<IActionResult> Index()
 		{
 			return View(await _context.Citizens.ToListAsync());
 		}
@@ -60,15 +63,26 @@ namespace MunicipalityManagementSystem.Controllers
 				return View(citizen);
 			}
 
-			try
-			{
-				citizen.RegistrationDate = DateTime.Now;
-				_context.Add(citizen);
-				await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "Citizen added successfully!";
-				return RedirectToAction(nameof(Index));
-			}
-			catch (Exception)
+            try
+            {
+                citizen.RegistrationDate = DateTime.Now;
+
+                // Auto-link UserId if a user account exists with the same email
+                if (!string.IsNullOrEmpty(citizen.Email))
+                {
+                    var existingUser = await _userManager.FindByEmailAsync(citizen.Email);
+                    if (existingUser != null)
+                    {
+                        citizen.UserId = existingUser.Id;
+                    }
+                }
+
+                _context.Add(citizen);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Citizen added successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
 			{
 				ModelState.AddModelError("", "An error occurred while saving the data. Please try again.");
 				return View(citizen);
@@ -106,14 +120,30 @@ namespace MunicipalityManagementSystem.Controllers
 				return View(citizen);
 			}
 
-			try
-			{
-				_context.Update(citizen);
-				await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "Citizen updated successfully!";
-				return RedirectToAction(nameof(Index));
-			}
-			catch (DbUpdateConcurrencyException)
+            try
+            {
+                // Preserve existing UserId — never let the edit form wipe it
+                var existingCitizen = await _context.Citizens.AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.CitizenID == citizen.CitizenID);
+
+                citizen.UserId = existingCitizen?.UserId;
+
+                // If no UserId is set yet, try to auto-link by email
+                if (citizen.UserId == null && !string.IsNullOrEmpty(citizen.Email))
+                {
+                    var matchedUser = await _userManager.FindByEmailAsync(citizen.Email);
+                    if (matchedUser != null)
+                    {
+                        citizen.UserId = matchedUser.Id;
+                    }
+                }
+
+                _context.Update(citizen);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Citizen updated successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
 			{
 				if (!CitizenExists(citizen.CitizenID))
 				{
@@ -150,21 +180,28 @@ namespace MunicipalityManagementSystem.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-			var citizen = await _context.Citizens.FindAsync(id);
-			if (citizen != null)
-			{
-				_context.Citizens.Remove(citizen);
-				await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "Citizen deleted successfully!";
-			}
-			else
-			{
-				TempData["ErrorMessage"] = "Error: Could not delete the citizen.";
-			}
-			return RedirectToAction(nameof(Index));
-		}
+            var citizen = await _context.Citizens.FindAsync(id);
+            if (citizen != null)
+            {
+                // If citizen has a linked user account, block deletion
+                if (citizen.UserId != null)
+                {
+                    TempData["ErrorMessage"] = "Cannot delete this citizen — they have a linked user account. Delete their user account first via Admin Portal.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-		private bool CitizenExists(int id)
+                _context.Citizens.Remove(citizen);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Citizen deleted successfully!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Error: Could not delete the citizen.";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool CitizenExists(int id)
 		{
 			return _context.Citizens.Any(e => e.CitizenID == id);
 		}

@@ -85,7 +85,7 @@ namespace MunicipalityManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAccountConfirmed()
         {
-            var userId = _userManager.GetUserId(User);
+            var userId = _userManager.GetUserId(User) ?? string.Empty;
             var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null) return NotFound();

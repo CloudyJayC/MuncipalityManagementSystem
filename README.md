@@ -15,6 +15,7 @@ An ASP.NET Core 10.0 MVC web application for managing local municipality operati
 - **Role-Based Access** — Admin, Staff, and Citizen roles with appropriate permissions
 - **Citizen Management** — Create, edit, and manage citizen records with contact details
 - **Service Requests** — Submit, track, and manage service requests with status updates
+- **Citizen Portal** — Citizens can view their own requests, cancel pending requests, update their profile, and delete their account
 - **Staff Directory** — Maintain staff records with department and position information
 - **Reports** — Create and manage reports linked to citizen records
 - **Security** — HTTPS, security headers, CSRF protection, and environment-based configuration
@@ -45,7 +46,14 @@ MunicipalityManagementSystem/
 ├── Data/                   # DbContext and database configuration
 ├── Migrations/             # EF Core migrations
 ├── Models/                 # Domain models + ApplicationUser
+├── Services/               # Email sender service
 ├── Views/                  # Razor views
+│   ├── CitizenPortal/      # Citizen profile and account management
+│   ├── Citizens/           # Citizen CRUD views
+│   ├── ServiceRequests/    # Service request views
+│   ├── Reports/            # Report views
+│   ├── Staff/              # Staff views
+│   └── Shared/             # Layout and partials
 ├── wwwroot/                # Static files (CSS, JS)
 ├── Properties/             # Launch settings
 ├── Program.cs              # App startup and middleware
@@ -99,7 +107,9 @@ MunicipalityManagementSystem/
    - HTTPS: `https://localhost:7080`
    - HTTP: `http://localhost:5284`
 
-6. Register an account to get started. The first Admin account is seeded automatically on startup.
+6. A default Admin account is seeded automatically on startup:
+   - **Email:** `admin@municipality.com`
+   - **Password:** `Admin1234`
 
 ---
 
@@ -115,7 +125,7 @@ MunicipalityManagementSystem/
 
 ## Usage
 
-**Citizens** can register publicly, submit service requests, and track the status of their requests from their personal portal.
+**Citizens** can register publicly, submit service requests, cancel pending requests, update their contact details, and delete their account from their personal portal.
 
 **Staff** can view all citizens, update service request statuses, and manage reports.
 
@@ -194,10 +204,12 @@ Ensure `app.MapRazorPages()` is present in `Program.cs` after `app.MapController
 - [x] Full CRUD for Citizens, Service Requests, Staff, Reports
 - [x] ASP.NET Core Identity authentication
 - [x] Role-based access (Admin, Staff, Citizen)
-- [ ] Citizen portal with personal dashboard
-- [ ] Service request status notifications
-- [ ] Admin dashboard with system statistics
-- [ ] Live deployment to Azure
+- [x] Citizen portal — profile management, cancel requests, delete account
+- [x] Role-aware navbar and service request views
+- [ ] Staff portal with restricted permissions
+- [ ] Admin dashboard with user and role management
+- [ ] Service request status notifications (SignalR)
+- [ ] Live deployment to Azure with Supabase PostgreSQL
 
 ---
 
@@ -213,5 +225,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 1.1.0 — Authentication & Role-Based Access  
+**Version**: 1.2.0 — Citizen Portal  
 **Last Updated**: March 2026

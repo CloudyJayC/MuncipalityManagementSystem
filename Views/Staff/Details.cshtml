@@ -29,6 +29,9 @@
         <dd class="col-sm-9">@Model.HireDate.ToShortDateString()</dd>
     </dl>
 
-    <a asp-action="Edit" asp-route-id="@Model?.StaffID" class="btn btn-primary">Edit</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.StaffID" class="btn btn-primary">Edit</a>
+    }
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>

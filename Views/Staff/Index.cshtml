@@ -12,9 +12,12 @@
             <p class="text-secondary mt-1">Manage and view all municipality staff members</p>
         </div>
         <div class="col-md-4 text-end">
-            <a asp-action="Create" class="btn btn-success">
-                <i class="bi bi-person-plus"></i> Add Staff Member
-            </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" class="btn btn-success">
+                    <i class="bi bi-person-plus"></i> Add Staff Member
+                </a>
+            }
         </div>
     </div>
 
@@ -57,12 +60,15 @@
                                         <a asp-action="Details" asp-route-id="@item.StaffID" class="btn btn-sm btn-secondary" title="View details">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a asp-action="Edit" asp-route-id="@item.StaffID" class="btn btn-sm btn-primary" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <a asp-action="Delete" asp-route-id="@item.StaffID" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?');">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.StaffID" class="btn btn-sm btn-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.StaffID" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?');">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        }
                                     </div>
                                 </td>
                             </tr>

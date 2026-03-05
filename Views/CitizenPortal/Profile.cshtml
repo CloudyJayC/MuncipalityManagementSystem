@@ -14,14 +14,14 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
-            {{-- Profile Card --}}
+            @* Profile Card *@
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><i class="bi bi-person-circle"></i> My Profile</h4>
                 </div>
                 <div class="card-body">
 
-                    {{-- Read-only fields --}}
+                    @* Read-only fields *@
                     <h6 class="text-muted mb-3">Account Information</h6>
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -46,7 +46,7 @@
 
                     <hr />
 
-                    {{-- Editable fields --}}
+                    @* Editable fields *@
                     <h6 class="text-muted mb-3">Contact & Address</h6>
                     <form asp-action="Profile" method="post">
                         <input type="hidden" name="CitizenID" value="@Model.CitizenID" />
@@ -88,7 +88,7 @@
                 </div>
             </div>
 
-            {{-- Danger Zone --}}
+            @* Danger Zone *@
             <div class="card border-danger shadow-sm">
                 <div class="card-header bg-danger text-white">
                     <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Danger Zone</h5>

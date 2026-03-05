@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MunicipalityManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin,Staff")]
     public class StaffController : Controller
     {
         private readonly ApplicationDbContext _context;

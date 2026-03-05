@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MunicipalityManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin,Staff")]
     public class ReportsController : Controller
 	{
 		private readonly ApplicationDbContext _context;

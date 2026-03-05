@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace MunicipalityManagementSystem.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin,Staff")]
     public class CitizensController : Controller
-	{
+    {
 		private readonly ApplicationDbContext _context;
 
 		public CitizensController(ApplicationDbContext context)
@@ -51,8 +51,8 @@ namespace MunicipalityManagementSystem.Controllers
 		// POST: Citizens/Create
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("FullName,Address,PhoneNumber,Email,DateOfBirth")] Citizen citizen)
-		{
+        public async Task<IActionResult> Create([Bind("FullName,StreetName,Suburb,City,PostalCode,PhoneNumber,Email,DateOfBirth")] Citizen citizen)
+        {
 			if (!ModelState.IsValid)
 			{
 				return View(citizen);
@@ -92,7 +92,7 @@ namespace MunicipalityManagementSystem.Controllers
 		// POST: Citizens/Edit/5
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("CitizenID,FullName,Address,PhoneNumber,Email,DateOfBirth,RegistrationDate")] Citizen citizen)
+		public async Task<IActionResult> Edit(int id, [Bind("CitizenID,FullName,StreetName,Suburb,City,PostalCode,PhoneNumber,Email,DateOfBirth,RegistrationDate")] Citizen citizen)
 		{
 			if (id != citizen.CitizenID)
 			{

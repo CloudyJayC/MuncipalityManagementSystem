@@ -221,6 +221,11 @@ namespace MunicipalityManagementSystem.Controllers
                 if (serviceRequest.RequestDate == DateTime.MinValue)
                     serviceRequest.RequestDate = DateTime.Now;
 
+                // Preserve existing UserId — never let the edit form wipe it
+                var existing = await _context.ServiceRequests.AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.RequestID == serviceRequest.RequestID);
+                serviceRequest.UserId = existing?.UserId;
+
                 _context.Update(serviceRequest);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Service request updated successfully!";

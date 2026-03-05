@@ -16,6 +16,7 @@ An ASP.NET Core 10.0 MVC web application for managing local municipality operati
 - **Citizen Management** — Create, edit, and manage citizen records with contact details
 - **Service Requests** — Submit, track, and manage service requests with status updates
 - **Citizen Portal** — Citizens can view their own requests, cancel pending requests, update their profile, and delete their account
+- **Staff Portal** — Staff dashboard with stats overview, restricted permissions enforced server-side and in views
 - **Staff Directory** — Maintain staff records with department and position information
 - **Reports** — Create and manage reports linked to citizen records
 - **Security** — HTTPS, security headers, CSRF protection, and environment-based configuration
@@ -53,6 +54,7 @@ MunicipalityManagementSystem/
 │   ├── ServiceRequests/    # Service request views
 │   ├── Reports/            # Report views
 │   ├── Staff/              # Staff views
+│   ├── StaffPortal/        # Staff dashboard
 │   └── Shared/             # Layout and partials
 ├── wwwroot/                # Static files (CSS, JS)
 ├── Properties/             # Launch settings
@@ -118,8 +120,45 @@ MunicipalityManagementSystem/
 | Role | Access |
 |---|---|
 | Admin | Full access — manages users, citizens, staff, service requests, reports |
-| Staff | Manages service requests and reports, views citizens |
+| Staff | Views citizens, manages service requests and reports, views staff directory |
 | Citizen | Submits and tracks their own service requests, manages their own profile |
+
+---
+
+## Role Permissions
+
+### Citizens
+| Action | Admin | Staff | Citizen |
+|---|---|---|---|
+| View | ✅ | ✅ | ❌ |
+| Create | ✅ | ❌ | ❌ |
+| Edit | ✅ | ✅ | ❌ |
+| Delete | ✅ | ❌ | ❌ |
+
+### Service Requests
+| Action | Admin | Staff | Citizen |
+|---|---|---|---|
+| View | ✅ All | ✅ All | ✅ Own only |
+| Create | ✅ | ✅ | ✅ |
+| Edit / Update Status | ✅ | ✅ | ❌ |
+| Cancel | ❌ | ❌ | ✅ Pending only |
+| Delete | ✅ | ❌ | ❌ |
+
+### Reports
+| Action | Admin | Staff | Citizen |
+|---|---|---|---|
+| View | ✅ | ✅ | ❌ |
+| Create | ✅ | ✅ | ❌ |
+| Edit | ✅ | ✅ | ❌ |
+| Delete | ✅ | ❌ | ❌ |
+
+### Staff Directory
+| Action | Admin | Staff | Citizen |
+|---|---|---|---|
+| View | ✅ | ✅ | ❌ |
+| Create | ✅ | ❌ | ❌ |
+| Edit | ✅ | ❌ | ❌ |
+| Delete | ✅ | ❌ | ❌ |
 
 ---
 
@@ -127,7 +166,7 @@ MunicipalityManagementSystem/
 
 **Citizens** can register publicly, submit service requests, cancel pending requests, update their contact details, and delete their account from their personal portal.
 
-**Staff** can view all citizens, update service request statuses, and manage reports.
+**Staff** can view all citizens, update service request statuses, manage reports, and view the staff directory. Staff land on a dashboard showing live stats and recent requests on login.
 
 **Admins** have full access to all modules and can manage user accounts and roles.
 
@@ -179,6 +218,8 @@ The app uses environment-specific settings:
 - Security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
 - CSRF tokens on all forms
 - ASP.NET Core Identity password hashing
+- Role-based authorization enforced both server-side and in views
+- UserId preserved on all edit operations to prevent data detachment
 - No credentials committed to version control
 
 ---
@@ -205,9 +246,9 @@ Ensure `app.MapRazorPages()` is present in `Program.cs` after `app.MapController
 - [x] ASP.NET Core Identity authentication
 - [x] Role-based access (Admin, Staff, Citizen)
 - [x] Citizen portal — profile management, cancel requests, delete account
-- [x] Role-aware navbar and service request views
-- [ ] Staff portal with restricted permissions
-- [ ] Admin dashboard with user and role management
+- [x] Role-aware navbar and views
+- [x] Staff portal — dashboard, restricted permissions, login redirect
+- [ ] Admin portal — user management, role assignment
 - [ ] Service request status notifications (SignalR)
 - [ ] Live deployment to Azure with Supabase PostgreSQL
 
@@ -225,5 +266,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 1.2.0 — Citizen Portal  
+**Version**: 1.3.0 — Staff Portal
 **Last Updated**: March 2026

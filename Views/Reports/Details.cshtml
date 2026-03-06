@@ -23,5 +23,8 @@
     <dd class="col-sm-10">@(Model.Citizen?.FullName ?? "Not Assigned")</dd>
 </dl>
 
-<a asp-action="Edit" asp-route-id="@Model.ReportID" class="btn btn-warning">Edit</a>
+@if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+{
+    <a asp-action="Edit" asp-route-id="@Model.ReportID" class="btn btn-warning">Edit</a>
+}
 <a asp-action="Index" class="btn btn-secondary">Back to List</a>

@@ -45,34 +45,22 @@ namespace MunicipalityManagementSystem.Controllers
             return View(staff);
         }
 
-        // GET: Staff/Create
+        // GET: Staff/Create — redirect to Admin portal which handles login account creation too
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            return View();
+            TempData["ErrorMessage"] = "Please use the Admin Portal to create staff accounts — this ensures a login account is created alongside the directory entry.";
+            return RedirectToAction("CreateStaff", "Admin");
         }
 
-        // POST: Staff/Create
+        // POST: Staff/Create — blocked, use Admin portal
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
+        public IActionResult Create([Bind("FullName,Position,Department,Email,PhoneNumber,HireDate")] Staff staff)
         {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Add(staff);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "Staff member added successfully!";
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception)
-                {
-                    ModelState.AddModelError("", "An error occurred while saving. Please try again.");
-                }
-            }
-            return View(staff);
+            TempData["ErrorMessage"] = "Please use the Admin Portal to create staff accounts.";
+            return RedirectToAction("CreateStaff", "Admin");
         }
 
         // GET: Staff/Edit/5
@@ -107,6 +95,11 @@ namespace MunicipalityManagementSystem.Controllers
             {
                 try
                 {
+                    // Preserve existing UserId — never let the edit form wipe it
+                    var existing = await _context.Staffs.AsNoTracking()
+                        .FirstOrDefaultAsync(s => s.StaffID == staff.StaffID);
+                    staff.UserId = existing?.UserId;
+
                     _context.Update(staff);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Staff member updated successfully!";

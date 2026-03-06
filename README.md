@@ -19,6 +19,7 @@ An ASP.NET Core 10.0 MVC web application for managing local municipality operati
 - **Staff Portal** — Staff dashboard with stats overview, restricted permissions enforced server-side and in views
 - **Staff Directory** — Maintain staff records with department and position information
 - **Reports** — Create and manage reports linked to citizen records
+- **Admin Portal** — Admin dashboard with system-wide stats, user management, and staff account creation
 - **Security** — HTTPS, security headers, CSRF protection, and environment-based configuration
 - **Error Handling** — Global exception handling with user-friendly error pages and logging
 
@@ -49,6 +50,7 @@ MunicipalityManagementSystem/
 ├── Models/                 # Domain models + ApplicationUser
 ├── Services/               # Email sender service
 ├── Views/                  # Razor views
+│   ├── Admin/              # Admin dashboard and user management
 │   ├── CitizenPortal/      # Citizen profile and account management
 │   ├── Citizens/           # Citizen CRUD views
 │   ├── ServiceRequests/    # Service request views
@@ -160,6 +162,14 @@ MunicipalityManagementSystem/
 | Edit | ✅ | ❌ | ❌ |
 | Delete | ✅ | ❌ | ❌ |
 
+### User Management (Admin only)
+| Action | Admin |
+|---|---|
+| View all users | ✅ |
+| Create Staff account | ✅ |
+| Delete user account | ✅ |
+| Delete own account | ❌ |
+
 ---
 
 ## Usage
@@ -168,7 +178,7 @@ MunicipalityManagementSystem/
 
 **Staff** can view all citizens, update service request statuses, manage reports, and view the staff directory. Staff land on a dashboard showing live stats and recent requests on login.
 
-**Admins** have full access to all modules and can manage user accounts and roles.
+**Admins** have full access to all modules. They land on a dashboard with system-wide stats on login, can manage all user accounts, create new staff logins (which automatically creates the linked Staff directory entry), and delete user accounts with clean data detachment.
 
 ---
 
@@ -220,6 +230,8 @@ The app uses environment-specific settings:
 - ASP.NET Core Identity password hashing
 - Role-based authorization enforced both server-side and in views
 - UserId preserved on all edit operations to prevent data detachment
+- Admin cannot delete their own account
+- UserId safely detached from all linked records before account deletion
 - No credentials committed to version control
 
 ---
@@ -248,7 +260,8 @@ Ensure `app.MapRazorPages()` is present in `Program.cs` after `app.MapController
 - [x] Citizen portal — profile management, cancel requests, delete account
 - [x] Role-aware navbar and views
 - [x] Staff portal — dashboard, restricted permissions, login redirect
-- [ ] Admin portal — user management, role assignment
+- [x] Admin portal — user management, create staff, login redirect
+- [ ] UI polish — status badges, pagination, search/filter
 - [ ] Service request status notifications (SignalR)
 - [ ] Live deployment to Azure with Supabase PostgreSQL
 
@@ -266,5 +279,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version**: 1.3.0 — Staff Portal
+**Version**: 0.5.0 — Admin Portal (pre-release)
 **Last Updated**: March 2026

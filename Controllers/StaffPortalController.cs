@@ -22,9 +22,19 @@ namespace MunicipalityManagementSystem.Controllers
         // GET: StaffPortal/Dashboard
         public async Task<IActionResult> Dashboard()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var userId = _userManager.GetUserId(User);
 
-            ViewData["StaffName"] = $"{user?.FirstName} {user?.LastName}";
+            // Pull name from Staff directory record if available, fall back to Identity name
+            var staffRecord = await _context.Staffs.FirstOrDefaultAsync(s => s.UserId == userId);
+            if (staffRecord != null)
+            {
+                ViewData["StaffName"] = staffRecord.FullName;
+            }
+            else
+            {
+                var user = await _userManager.GetUserAsync(User);
+                ViewData["StaffName"] = $"{user?.FirstName} {user?.LastName}";
+            }
             ViewData["PendingCount"] = await _context.ServiceRequests.CountAsync(s => s.Status == "Pending");
             ViewData["InProgressCount"] = await _context.ServiceRequests.CountAsync(s => s.Status == "In Progress");
             ViewData["CompletedCount"] = await _context.ServiceRequests.CountAsync(s => s.Status == "Completed");

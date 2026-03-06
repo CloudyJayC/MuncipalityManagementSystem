@@ -154,7 +154,7 @@ using (var scope = app.Services.CreateScope())
 
     if (await userManager.FindByEmailAsync(staffEmail) == null)
     {
-        var staff = new ApplicationUser
+        var staffUser = new ApplicationUser
         {
             UserName = staffEmail,
             Email = staffEmail,
@@ -163,10 +163,25 @@ using (var scope = app.Services.CreateScope())
             EmailConfirmed = true
         };
 
-        var result = await userManager.CreateAsync(staff, staffPassword);
+        var result = await userManager.CreateAsync(staffUser, staffPassword);
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(staff, "Staff");
+            await userManager.AddToRoleAsync(staffUser, "Staff");
+
+            // Create linked Staff directory entry
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var staffRecord = new MunicipalityManagementSystem.Models.Staff
+            {
+                FullName = "Test Staff",
+                Position = "General Staff",
+                Department = "Administration",
+                Email = staffEmail,
+                PhoneNumber = "+27000000000",
+                HireDate = DateTime.Now,
+                UserId = staffUser.Id
+            };
+            dbContext.Staffs.Add(staffRecord);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

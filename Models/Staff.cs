@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -25,7 +25,9 @@ namespace MunicipalityManagementSystem.Models
 		[Required, MaxLength(20)]
 		public string? PhoneNumber { get; set; }
 
-		[DataType(DataType.Date)]
-		public DateTime HireDate { get; set; }
-	}
+        [DataType(DataType.Date)]
+        public DateTime HireDate { get; set; }
+
+        public string? UserId { get; set; }
+    }
 }

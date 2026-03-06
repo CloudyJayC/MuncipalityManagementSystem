@@ -13,10 +13,10 @@ namespace MunicipalityManagementSystem.Models
 		[Display(Name = "Report Type")]
 		[Required(ErrorMessage = "Report type is required")]
 		[MaxLength(255)]
-		public string? ReportType { get; set; }
+		public string ReportType { get; set; } = string.Empty;
 
 		[Required(ErrorMessage = "Details are required")]
-		public string? Details { get; set; }
+		public string Details { get; set; } = string.Empty;
 
 		[Display(Name = "Submission Date")]
 		[DataType(DataType.Date)]
@@ -25,7 +25,7 @@ namespace MunicipalityManagementSystem.Models
 		[Display(Name = "Status")]
 		[Required(ErrorMessage = "Status is required")]
 		[MaxLength(50)]
-		public string? Status { get; set; } = "Under Review";
+		public string Status { get; set; } = "Under Review";
 
 		// Foreign Key
 		[ForeignKey("Citizen")]

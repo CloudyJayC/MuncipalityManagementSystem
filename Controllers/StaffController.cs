@@ -148,6 +148,13 @@ namespace MunicipalityManagementSystem.Controllers
             var staff = await _context.Staffs.FindAsync(id);
             if (staff != null)
             {
+                // If staff has a linked user account, block deletion
+                if (staff.UserId != null)
+                {
+                    TempData["ErrorMessage"] = "Cannot delete this staff member — they have a linked user account. Delete their user account first via Admin Portal.";
+                    return RedirectToAction(nameof(Index));
+                }
+
                 _context.Staffs.Remove(staff);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Staff member deleted successfully!";

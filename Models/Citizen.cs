@@ -9,25 +9,25 @@ namespace MunicipalityManagementSystem.Models
         public int CitizenID { get; set; }
 
         [Required, MaxLength(255)]
-        public string? FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [Required, MaxLength(100)]
-        public string? StreetName { get; set; }
+        public string StreetName { get; set; } = string.Empty;
 
         [Required, MaxLength(100)]
-        public string? Suburb { get; set; }
+        public string Suburb { get; set; } = string.Empty;
 
         [Required, MaxLength(100)]
-        public string? City { get; set; }
+        public string City { get; set; } = string.Empty;
 
         [Required, MaxLength(10)]
-        public string? PostalCode { get; set; }
+        public string PostalCode { get; set; } = string.Empty;
 
         [Required, MaxLength(20)]
-        public string? PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required, EmailAddress]
-        public string? Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }

@@ -1,0 +1,111 @@
+@model MunicipalityManagementSystem.Models.CreateStaffViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Staff Account";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold" style="color: #002395;">
+        <i class="bi bi-person-plus-fill me-2"></i>Create Staff Account
+    </h1>
+    <a asp-controller="Admin" asp-action="Users" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Users
+    </a>
+</div>
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+<form id="createStaffForm" asp-controller="Admin" asp-action="CreateStaff" method="post">
+@Html.AntiForgeryToken()
+<div class="row g-4">
+
+    <!-- Account Details -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header text-white fw-semibold" style="background:#002395;">
+                <i class="bi bi-lock-fill me-2"></i>Account Details
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label asp-for="FirstName" class="form-label"></label>
+                    <input asp-for="FirstName" class="form-control" placeholder="e.g. Jane" />
+                    <span asp-validation-for="FirstName" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="LastName" class="form-label"></label>
+                    <input asp-for="LastName" class="form-control" placeholder="e.g. Smith" />
+                    <span asp-validation-for="LastName" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="e.g. jane.smith@municipality.com" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" placeholder="Min. 8 characters, 1 uppercase, 1 digit" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Re-enter password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Directory Details -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header text-white fw-semibold" style="background:#007A4D;">
+                <i class="bi bi-person-badge-fill me-2"></i>Staff Directory Details
+            </div>
+            <div class="card-body">
+
+                    <div class="mb-3">
+                        <label asp-for="Position" class="form-label"></label>
+                        <input asp-for="Position" class="form-control" placeholder="e.g. Senior Inspector" />
+                        <span asp-validation-for="Position" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Department" class="form-label"></label>
+                        <input asp-for="Department" class="form-control" placeholder="e.g. Public Works" />
+                        <span asp-validation-for="Department" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="e.g. +27821234567" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="HireDate" class="form-label"></label>
+                        <input asp-for="HireDate" type="date" class="form-control" />
+                        <span asp-validation-for="HireDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" form="createStaffForm" class="btn btn-success w-100">
+                            <i class="bi bi-person-check-fill me-1"></i> Create Staff Account
+                        </button>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}

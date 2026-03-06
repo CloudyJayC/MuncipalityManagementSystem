@@ -100,5 +100,23 @@
                 </div>
             </div>
         }
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="col-md-6 mb-3">
+                <div class="card h-100" style="border-top: 3px solid #002395;">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-shield-lock" style="font-size: 2rem; color: #002395;"></i>
+                            <h5 class="card-title ms-3 mb-0">Admin Portal</h5>
+                        </div>
+                        <p class="card-text text-secondary">
+                            Manage user accounts, create staff logins, and view system-wide statistics from the admin dashboard.
+                        </p>
+                        <a asp-controller="Admin" asp-action="Dashboard" class="text-primary fw-500">Go to Admin Portal →</a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>

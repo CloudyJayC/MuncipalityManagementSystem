@@ -1,0 +1,88 @@
+@model IEnumerable<MunicipalityManagementSystem.Models.AdminUserViewModel>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<MunicipalityManagementSystem.Models.ApplicationUser> UserManager
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "User Management";
+    var currentUserId = UserManager.GetUserId(User);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold" style="color: #002395;">
+        <i class="bi bi-people-fill me-2"></i>User Management
+    </h1>
+    <a asp-controller="Admin" asp-action="CreateStaff" class="btn btn-success">
+        <i class="bi bi-person-plus me-1"></i> Create Staff Account
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="p-4 text-center text-muted">No users found.</div>
+        }
+        else
+        {
+            <table class="table table-hover mb-0">
+                <thead style="background-color: #002395; color: white;">
+                    <tr>
+                        <th class="ps-3">Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Linked Record</th>
+                        <th class="text-center pe-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td class="ps-3 align-middle">@u.FullName</td>
+                            <td class="align-middle">@u.Email</td>
+                            <td class="align-middle">
+                                @{
+                                    var badgeStyle = u.Role switch
+                                    {
+                                                        "Admin" => "background:#C53030;",
+                                                        "Staff" => "background:#002395;",
+                                                        "Citizen" => "background:#007A4D;",
+                                        _ => "background:#6c757d;"
+                                    };
+                                }
+                                <span class="badge" style="@badgeStyle">@u.Role</span>
+                            </td>
+                            <td class="align-middle">
+                                @(u.LinkedName ?? "None")
+                            </td>
+                            <td class="text-center align-middle pe-3">
+                                @if (u.Id != currentUserId)
+                                {
+                                    <form asp-controller="Admin" asp-action="DeleteUser" method="post"
+                                          onsubmit="return confirm('Are you sure you want to delete @u.Email? This cannot be undone.');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@u.Id" />
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">You</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+    </a>
+</div>

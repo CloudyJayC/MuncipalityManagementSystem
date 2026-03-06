@@ -122,7 +122,7 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
                     {
                         if (await _signInManager.UserManager.IsInRoleAsync(user, "Admin"))
                         {
-                            return RedirectToAction("Index", "Citizens");
+                            return RedirectToAction("Dashboard", "Admin");
                         }
                         else if (await _signInManager.UserManager.IsInRoleAsync(user, "Staff"))
                         {

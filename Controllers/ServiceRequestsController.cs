@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
+using MunicipalityManagementSystem.Hubs;
 using MunicipalityManagementSystem.Models;
+using MunicipalityManagementSystem.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,11 +19,19 @@ namespace MunicipalityManagementSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly NotificationService _notificationService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public ServiceRequestsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ServiceRequestsController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            NotificationService notificationService,
+            IHubContext<NotificationHub> hubContext)
         {
             _context = context;
             _userManager = userManager;
+            _notificationService = notificationService;
+            _hubContext = hubContext;
         }
 
         // GET: ServiceRequests
@@ -218,17 +229,43 @@ namespace MunicipalityManagementSystem.Controllers
 
             try
             {
-                if (serviceRequest.RequestDate == DateTime.MinValue)
-                    serviceRequest.RequestDate = DateTime.Now;
-
-                // Preserve existing UserId — never let the edit form wipe it
+                // Fetch existing record to preserve UserId and detect status change
                 var existing = await _context.ServiceRequests.AsNoTracking()
                     .FirstOrDefaultAsync(s => s.RequestID == serviceRequest.RequestID);
-                serviceRequest.UserId = existing?.UserId;
+
+                if (existing == null) return NotFound();
+
+                // Preserve existing UserId — never let the edit form wipe it
+                serviceRequest.UserId = existing.UserId;
+
+                if (serviceRequest.RequestDate == DateTime.MinValue)
+                    serviceRequest.RequestDate = DateTime.Now;
 
                 _context.Update(serviceRequest);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Service request updated successfully!";
+
+                // Fire notification only if status actually changed and citizen has an account
+                if (existing.Status != serviceRequest.Status
+                    && !string.IsNullOrWhiteSpace(serviceRequest.UserId))
+                {
+                    var message = $"Your {serviceRequest.ServiceType} request status has been updated to: {serviceRequest.Status}.";
+
+                    // Persist notification to DB
+                    var notification = await _notificationService.CreateNotificationAsync(
+                        serviceRequest.UserId,
+                        message,
+                        serviceRequest.RequestID);
+
+                    // Push live update via SignalR to that citizen's group
+                    if (notification != null)
+                    {
+                        await _hubContext.Clients
+                            .Group(serviceRequest.UserId)
+                            .SendAsync("ReceiveNotification", message);
+                    }
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)

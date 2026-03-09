@@ -89,9 +89,10 @@ namespace MunicipalityManagementSystem.Controllers
 			}
 		}
 
-		// GET: Citizens/Edit/5
-		public async Task<IActionResult> Edit(int? id)
-		{
+        // GET: Citizens/Edit/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int? id)
+        {
 			if (id == null)
 			{
 				return NotFound();

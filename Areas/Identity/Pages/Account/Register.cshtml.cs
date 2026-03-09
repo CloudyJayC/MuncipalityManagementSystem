@@ -256,41 +256,4 @@ namespace MuncipalityManagementSystem.Areas.Identity.Pages.Account
             return (IUserEmailStore<ApplicationUser>)_userStore;
         }
     }
-
-    /// <summary>
-    /// Custom validation attribute to ensure user is at least 16 years old
-    /// </summary>
-    public class AgeValidationAttribute : ValidationAttribute
-    {
-        private readonly int _minimumAge;
-
-        public AgeValidationAttribute(int minimumAge)
-        {
-            _minimumAge = minimumAge;
-        }
-
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            if (value is DateTime dateOfBirth)
-            {
-                var today = DateTime.Today;
-                var age = today.Year - dateOfBirth.Year;
-
-                // Check if birthday hasn't occurred this year yet
-                if (dateOfBirth.Date > today.AddYears(-age))
-                {
-                    age--;
-                }
-
-                if (age < _minimumAge)
-                {
-                    return new ValidationResult(
-                        $"You must be at least {_minimumAge} years old to register",
-                        new[] { validationContext.MemberName });
-                }
-            }
-
-            return ValidationResult.Success;
-        }
-    }
 }

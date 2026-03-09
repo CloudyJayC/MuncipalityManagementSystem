@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using MunicipalityManagementSystem.Data;
+using MunicipalityManagementSystem.Hubs;
 using MunicipalityManagementSystem.Models;
 using MunicipalityManagementSystem.Services;
 
@@ -44,6 +45,12 @@ builder.Services.ConfigureApplicationCookie(options => {
 
 // Register email sender service
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+// Register notification service
+builder.Services.AddScoped<NotificationService>();
+
+// Register SignalR for real-time notifications
+builder.Services.AddSignalR();
 
 // Configure MVC services with antiforgery
 builder.Services.AddControllersWithViews();
@@ -107,9 +114,12 @@ app.UseAuthorization();
 
 // Map controller routes
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+// Map SignalR hub endpoint
+app.MapHub<NotificationHub>("/notificationHub");
 
 // seeds the roles and default admin account
 using (var scope = app.Services.CreateScope())

@@ -82,7 +82,18 @@
 
                 </div>
             </div>
-
+            @* Notifications *@
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header text-white fw-semibold" style="background: #002395;">
+                    <i class="bi bi-bell-fill me-2" style="color: #C9A227;"></i>Notifications
+                </div>
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <p class="mb-0 text-muted">View and manage your service request notifications.</p>
+                    <a asp-controller="Notifications" asp-action="Index" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-bell me-1"></i> My Notifications
+                    </a>
+                </div>
+            </div>
             @* Danger Zone *@
             <div class="card border-danger shadow-sm">
                 <div class="card-header bg-danger text-white">

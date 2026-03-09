@@ -1,0 +1,117 @@
+@model IEnumerable<MunicipalityManagementSystem.Models.Notification>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "My Notifications";
+    var unreadCount = Model.Count(n => !n.IsRead);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold" style="color: #002395;">
+        <i class="bi bi-bell-fill me-2" style="color: #C9A227;"></i>My Notifications
+        @if (unreadCount > 0)
+        {
+            <span class="badge rounded-pill ms-2" style="background: #C53030; font-size: 0.7rem;">
+                @unreadCount unread
+            </span>
+        }
+    </h1>
+
+    @if (Model.Any(n => !n.IsRead))
+    {
+        <form asp-action="MarkAllRead" asp-controller="Notifications" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-check2-all me-1"></i> Mark All as Read
+            </button>
+        </form>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="bi bi-bell-slash" style="font-size: 4rem; color: #dee2e6;"></i>
+        <p class="text-muted mt-3 fs-5">You have no notifications yet.</p>
+        <p class="text-muted small">When your service request status changes, you'll be notified here.</p>
+    </div>
+}
+else
+{
+    <div class="d-flex flex-column gap-3">
+        @foreach (var notification in Model)
+        {
+            <div class="card shadow-sm border-0 @(notification.IsRead ? "" : "border-start border-4")"
+                 style="@(notification.IsRead ? "opacity: 0.8;" : "border-left-color: #002395 !important;")">
+                <div class="card-body d-flex justify-content-between align-items-start gap-3">
+
+                    <div class="d-flex gap-3 align-items-start flex-grow-1">
+                        <div class="mt-1">
+                            @if (!notification.IsRead)
+                            {
+                                <i class="bi bi-bell-fill fs-5" style="color: #C9A227;"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-bell fs-5 text-muted"></i>
+                            }
+                        </div>
+
+                        <div>
+                            <p class="mb-1 @(notification.IsRead ? "text-muted" : "fw-semibold")">
+                                @notification.Message
+                            </p>
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                @notification.CreatedAt.ToString("dd MMM yyyy, HH:mm")
+                            </small>
+
+                            @if (notification.ServiceRequestId != null)
+                            {
+                                <div class="mt-2">
+                                    <a asp-controller="ServiceRequests"
+                                       asp-action="Details"
+                                       asp-route-id="@notification.ServiceRequestId"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye me-1"></i> View Request
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 align-items-end">
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-action="MarkRead"
+                                  asp-controller="Notifications"
+                                  asp-route-id="@notification.Id"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        title="Mark as read">
+                                    <i class="bi bi-check2"></i>
+                                </button>
+                            </form>
+                        }
+
+                        <form asp-action="Delete"
+                              asp-controller="Notifications"
+                              asp-route-id="@notification.Id"
+                              method="post"
+                              onsubmit="return confirm('Delete this notification?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-danger"
+                                    title="Delete notification">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}

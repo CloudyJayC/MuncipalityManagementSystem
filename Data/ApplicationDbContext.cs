@@ -26,15 +26,20 @@ namespace MunicipalityManagementSystem.Data
 				w.Ignore(RelationalEventId.PendingModelChangesWarning));
 		}
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-			modelBuilder.Entity<Citizen>().ToTable("Citizens");
-			modelBuilder.Entity<ServiceRequest>().ToTable("ServiceRequests");
-			modelBuilder.Entity<Staff>().ToTable("Staffs");
-			modelBuilder.Entity<Report>().ToTable("Reports");
+            modelBuilder.Entity<Citizen>().ToTable("Citizens");
+            modelBuilder.Entity<ServiceRequest>().ToTable("ServiceRequests");
+            modelBuilder.Entity<Staff>().ToTable("Staffs");
+            modelBuilder.Entity<Report>().ToTable("Reports");
             modelBuilder.Entity<Notification>().ToTable("Notifications");
+
+            // Index on Notifications.UserId for fast per-user queries
+            modelBuilder.Entity<Notification>()
+                .HasIndex(n => n.UserId)
+                .HasDatabaseName("IX_Notifications_UserId");
         }
-	}
+    }
 }

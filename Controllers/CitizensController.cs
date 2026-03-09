@@ -105,56 +105,39 @@ namespace MunicipalityManagementSystem.Controllers
 			return View(citizen);
 		}
 
-		// POST: Citizens/Edit/5
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("CitizenID,FullName,StreetName,Suburb,City,PostalCode,PhoneNumber,Email,DateOfBirth,RegistrationDate")] Citizen citizen)
-		{
-			if (id != citizen.CitizenID)
-			{
-				return NotFound();
-			}
+        // POST: Citizens/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("CitizenID,FullName,StreetName,Suburb,City,PostalCode,PhoneNumber,Email,DateOfBirth,RegistrationDate")] Citizen citizen)
+        {
+            if (id != citizen.CitizenID)
+                return NotFound();
 
-			if (!ModelState.IsValid)
-			{
-				return View(citizen);
-			}
-
-            try
+            if (ModelState.IsValid)
             {
-                // Preserve existing UserId — never let the edit form wipe it
-                var existingCitizen = await _context.Citizens.AsNoTracking()
-                    .FirstOrDefaultAsync(c => c.CitizenID == citizen.CitizenID);
-
-                citizen.UserId = existingCitizen?.UserId;
-
-                // If no UserId is set yet, try to auto-link by email
-                if (citizen.UserId == null && !string.IsNullOrEmpty(citizen.Email))
+                try
                 {
-                    var matchedUser = await _userManager.FindByEmailAsync(citizen.Email);
-                    if (matchedUser != null)
-                    {
-                        citizen.UserId = matchedUser.Id;
-                    }
-                }
+                    // Preserve existing UserId — never let the edit form wipe it
+                    var existing = await _context.Citizens.AsNoTracking()
+                        .FirstOrDefaultAsync(c => c.CitizenID == citizen.CitizenID);
+                    citizen.UserId = existing?.UserId;
 
-                _context.Update(citizen);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Citizen updated successfully!";
+                    _context.Update(citizen);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Citizen updated successfully!";
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CitizenExists(citizen.CitizenID))
+                        return NotFound();
+                    else
+                        throw;
+                }
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
-			{
-				if (!CitizenExists(citizen.CitizenID))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
-		}
+            return View(citizen);
+        }
 
         // GET: Citizens/Delete/5
         [Authorize(Roles = "Admin")]

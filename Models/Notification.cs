@@ -10,6 +10,7 @@ namespace MunicipalityManagementSystem.Models
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(450)]
         public string UserId { get; set; } = string.Empty;
 
         [Required]

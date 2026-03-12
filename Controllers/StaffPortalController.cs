@@ -35,20 +35,49 @@ namespace MunicipalityManagementSystem.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 ViewData["StaffName"] = $"{user?.FirstName} {user?.LastName}";
             }
-            ViewData["PendingCount"] = await _context.ServiceRequests.CountAsync(s => s.Status == "Pending");
-            ViewData["InProgressCount"] = await _context.ServiceRequests.CountAsync(s => s.Status == "In Progress");
-            ViewData["CompletedCount"] = await _context.ServiceRequests.CountAsync(s => s.Status == "Completed");
+
+            // Stat cards
             ViewData["TotalCitizens"] = await _context.Citizens.CountAsync();
+            ViewData["TotalRequests"] = await _context.ServiceRequests.CountAsync();
+            ViewData["PendingRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Pending");
+            ViewData["InProgressRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "In Progress");
+            ViewData["CompletedRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Completed");
             ViewData["TotalReports"] = await _context.Reports.CountAsync();
 
-            // 5 most recent service requests
+            // 5 most recent service requests for the recent activity table
             var recentRequests = await _context.ServiceRequests
-                .Include(s => s.Citizen)
-                .OrderByDescending(s => s.RequestDate)
+                .Include(r => r.Citizen)
+                .OrderByDescending(r => r.RequestDate)
                 .Take(5)
                 .ToListAsync();
+            ViewData["RecentRequests"] = recentRequests;
 
-            return View(recentRequests);
+            // Line chart — requests created per day for the last 7 days
+            var today = DateTime.Today;
+            var sevenDaysAgo = today.AddDays(-6);
+
+            var requestsLast7Days = await _context.ServiceRequests
+                .Where(r => r.RequestDate.Date >= sevenDaysAgo)
+                .GroupBy(r => r.RequestDate.Date)
+                .Select(g => new { Date = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            // Build a complete 7-day series — fill 0 for days with no requests
+            var chartLabels = new List<string>();
+            var chartCounts = new List<int>();
+
+            for (int i = 6; i >= 0; i--)
+            {
+                var day = today.AddDays(-i);
+                chartLabels.Add(day.ToString("dd MMM"));
+                var match = requestsLast7Days.FirstOrDefault(x => x.Date == day);
+                chartCounts.Add(match?.Count ?? 0);
+            }
+
+            ViewData["LineChartLabels"] = System.Text.Json.JsonSerializer.Serialize(chartLabels);
+            ViewData["LineChartCounts"] = System.Text.Json.JsonSerializer.Serialize(chartCounts);
+
+            return View();
         }
     }
 }

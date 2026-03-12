@@ -1,257 +1,523 @@
 @using Microsoft.AspNetCore.Identity
-<!--Dependancy Injection for Notifaciotn service-->
-@inject UserManager<MunicipalityManagementSystem.Models.ApplicationUser> UserManager
-@inject MunicipalityManagementSystem.Services.NotificationService NotificationService
-@{
-    var unreadCount = 0;
-    if (User.IsInRole("Citizen"))
-    {
-        var currentUserId = UserManager.GetUserId(User);
-        if (!string.IsNullOrEmpty(currentUserId))
-        {
-            unreadCount = await NotificationService.GetUnreadCountAsync(currentUserId);
-        }
-    }
-}
+@using MunicipalityManagementSystem.Models
+@using MunicipalityManagementSystem.Services
+@inject UserManager<ApplicationUser> UserManager
+@inject NotificationService NotificationService
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Municipality Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Municipality Management System</title>
 
-    <!-- Used Bootstrap for Styling -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    @* Favicon *@
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    @* Bootstrap 5 CSS *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
-    <!-- Custom Css for me -->
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @* AdminLTE 3 CSS *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css" />
 
-    <!-- Added CSS to remove the gap -->
+    @* Bootstrap Icons *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    @* DataTables Bootstrap 5 CSS *@
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+
+    @* Toastify CSS *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+
+    @* SA Colour overrides + custom layout styles *@
     <style>
-        body {
-            margin: 0;
+        :root {
+            --sa-blue:   #002395;
+            --sa-green:  #007A4D;
+            --sa-gold:   #C9A227;
+            --sa-danger: #C53030;
+        }
+
+        /* Sidebar brand bar */
+        .main-sidebar .brand-link {
+            background: var(--sa-blue);
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        .main-sidebar .brand-link .brand-text {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff !important;
+        }
+
+        /* Sidebar background */
+        .main-sidebar,
+        .main-sidebar .sidebar {
+            background: #1a2a4a;
+        }
+
+        /* Nav item text + icons */
+        .nav-sidebar .nav-link {
+            color: rgba(255,255,255,0.75) !important;
+            border-radius: 4px;
+            margin: 1px 6px;
+        }
+        .nav-sidebar .nav-link:hover,
+        .nav-sidebar .nav-link.active {
+            background: var(--sa-blue) !important;
+            color: #fff !important;
+        }
+        .nav-sidebar .nav-link .nav-icon {
+            color: var(--sa-gold) !important;
+        }
+
+        /* Section headers in sidebar */
+        .nav-sidebar .nav-header {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            padding: 0.75rem 1rem 0.25rem;
+        }
+
+        /* Top navbar */
+        .main-header.navbar {
+            background: #fff;
+            border-bottom: 2px solid var(--sa-blue);
+        }
+        .main-header .nav-link {
+            color: #333 !important;
+        }
+
+        /* Bell badge */
+        .navbar-badge {
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 2px 4px;
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background: var(--sa-danger) !important;
+        }
+
+        /* Content wrapper background */
+        .content-wrapper {
+            background: #f4f6f9;
+        }
+
+        /* Page title strip */
+        .content-header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--sa-blue);
+        }
+
+        /* Smooth sidebar transition */
+        body.sidebar-mini.sidebar-collapse .main-sidebar:hover {
+            width: 250px;
         }
     </style>
+
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    @* Toast container for live SignalR notifications — Citizens only *@
-    @if (User.IsInRole("Citizen"))
-    {
-        <div id="toast-container"
-             class="toast-container position-fixed bottom-0 end-0 p-3"
-             style="z-index: 9999;">
-        </div>
-    }
 
-    <!-- Navigation Bar for all pages -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-building"></i> Municipality System
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")"
-                           asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "About" ? "active" : "")"
-                           asp-controller="Home" asp-action="About">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Contact" ? "active" : "")"
-                           asp-controller="Home" asp-action="Contact">Contact</a>
-                    </li>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Citizens" ? "active" : "")"
-                               asp-controller="Citizens" asp-action="Index">Citizens</a>
-                        </li>
-                    }
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
 
-                    @if (User.Identity != null && User.Identity.IsAuthenticated)
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ServiceRequests" ? "active" : "")"
-                               asp-controller="ServiceRequests" asp-action="Index">Service Requests</a>
-                        </li>
-                    }
+    @* ═══════════════════════════════════════ TOP NAVBAR ═══════════════════════════════════════ *@
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
 
-                    @if (User.IsInRole("Admin") || User.IsInRole("Staff"))
+        @* Left: sidebar toggle + breadcrumb *@
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+                    <i class="bi bi-list fs-5"></i>
+                </a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a asp-controller="Home" asp-action="Index" class="nav-link text-muted small">Home</a>
+            </li>
+        </ul>
+
+        @* Right: notifications bell (Citizen only) + user menu *@
+        <ul class="navbar-nav ms-auto">
+
+            @if (User.IsInRole("Citizen"))
+            {
+                var userId = UserManager.GetUserId(User);
+                var unreadCount = userId != null
+                    ? await NotificationService.GetUnreadCountAsync(userId)
+                    : 0;
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Notifications" asp-action="Index" title="Notifications">
+                        <i class="bi bi-bell-fill fs-5"></i>
+                        @if (unreadCount > 0)
+                        {
+                            <span class="badge navbar-badge" id="notifBadge">@unreadCount</span>
+                        }
+                        else
+                        {
+                            <span class="badge navbar-badge d-none" id="notifBadge">0</span>
+                        }
+                    </a>
+                </li>
+            }
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle me-1"></i>
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Reports" ? "active" : "")"
-                               asp-controller="Reports" asp-action="Index">Reports</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Staff" ? "active" : "")"
-                               asp-controller="Staff" asp-action="Index">Staff</a>
-                        </li>
+                        @User.Identity.Name
                     }
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    @if (User.IsInRole("Citizen"))
+                    {
+                        <li>
+                            <a class="dropdown-item" asp-controller="CitizenPortal" asp-action="Profile">
+                                <i class="bi bi-person me-2"></i>My Profile
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider" /></li>
+                    }
+                    <li>
+                        <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </nav>
+    @* ══════════════════════════════════════ END TOP NAVBAR ══════════════════════════════════════ *@
+
+
+    @* ══════════════════════════════════════ SIDEBAR ══════════════════════════════════════ *@
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+        @* Brand *@
+        <a asp-controller="Home" asp-action="Index" class="brand-link">
+            <i class="bi bi-building-fill text-white ms-3 me-2 fs-5"></i>
+            <span class="brand-text">MMS Portal</span>
+        </a>
+
+        <div class="sidebar">
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column"
+                    data-widget="treeview" role="menu" data-accordion="false">
+
+                    @* ── ADMIN NAVIGATION ── *@
                     @if (User.IsInRole("Admin"))
                     {
+                        <li class="nav-header">ADMIN</li>
+
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["Action"]?.ToString() == "Dashboard" ? "active" : "")"
-                               asp-controller="Admin" asp-action="Dashboard">
-                                <i class="bi bi-speedometer2"></i> Dashboard
+                            <a asp-controller="Admin" asp-action="Dashboard"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+                                <i class="nav-icon bi bi-speedometer2"></i>
+                                <p>Dashboard</p>
                             </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["Action"]?.ToString() == "Users" ? "active" : "")"
-                               asp-controller="Admin" asp-action="Users">
-                                <i class="bi bi-people"></i> User Management
+                            <a asp-controller="Admin" asp-action="Users"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" && ViewContext.RouteData.Values["action"]?.ToString() == "Users" ? "active" : "")">
+                                <i class="nav-icon bi bi-people-fill"></i>
+                                <p>User Management</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-header">RECORDS</li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Citizens" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Citizens" ? "active" : "")">
+                                <i class="nav-icon bi bi-person-vcard-fill"></i>
+                                <p>Citizens</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="ServiceRequests" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ServiceRequests" ? "active" : "")">
+                                <i class="nav-icon bi bi-clipboard2-check-fill"></i>
+                                <p>Service Requests</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Staff" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Staff" ? "active" : "")">
+                                <i class="nav-icon bi bi-person-badge-fill"></i>
+                                <p>Staff Directory</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Reports" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")">
+                                <i class="nav-icon bi bi-file-earmark-text-fill"></i>
+                                <p>Reports</p>
                             </a>
                         </li>
                     }
-                    @if (User.IsInRole("Citizen"))
+
+                    @* ── STAFF NAVIGATION ── *@
+                    @if (User.IsInRole("Staff"))
                     {
+                        <li class="nav-header">STAFF</li>
+
                         <li class="nav-item">
-                            <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CitizenPortal" ? "active" : "")"
-                               asp-controller="CitizenPortal" asp-action="Profile">
-                                <i class="bi bi-person-circle"></i> My Profile
+                            <a asp-controller="StaffPortal" asp-action="Dashboard"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "StaffPortal" ? "active" : "")">
+                                <i class="nav-icon bi bi-speedometer2"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-header">RECORDS</li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Citizens" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Citizens" ? "active" : "")">
+                                <i class="nav-icon bi bi-person-vcard-fill"></i>
+                                <p>Citizens</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="ServiceRequests" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ServiceRequests" ? "active" : "")">
+                                <i class="nav-icon bi bi-clipboard2-check-fill"></i>
+                                <p>Service Requests</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Staff" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Staff" ? "active" : "")">
+                                <i class="nav-icon bi bi-person-badge-fill"></i>
+                                <p>Staff Directory</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="Reports" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")">
+                                <i class="nav-icon bi bi-file-earmark-text-fill"></i>
+                                <p>Reports</p>
                             </a>
                         </li>
                     }
+
+                    @* ── CITIZEN NAVIGATION ── *@
                     @if (User.IsInRole("Citizen"))
                     {
-                        <li class="nav-item position-relative me-2">
+                        <li class="nav-header">MY PORTAL</li>
+
+                        <li class="nav-item">
+                            <a asp-controller="CitizenPortal" asp-action="Profile"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "CitizenPortal" ? "active" : "")">
+                                <i class="nav-icon bi bi-person-circle"></i>
+                                <p>My Profile</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-controller="ServiceRequests" asp-action="Index"
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ServiceRequests" ? "active" : "")">
+                                <i class="nav-icon bi bi-clipboard2-check-fill"></i>
+                                <p>My Requests</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a asp-controller="Notifications" asp-action="Index"
-                               class="nav-link position-relative"
-                               title="Notifications">
-                                <i class="bi bi-bell-fill fs-5" style="color: #C9A227;"></i>
-                                @if (unreadCount > 0)
-                                {
-                                    <span id="notification-badge"
-                                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill"
-                                          style="background: #C53030; font-size: 0.65rem;">
-                                        @unreadCount
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span id="notification-badge"
-                                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill d-none"
-                                          style="background: #C53030; font-size: 0.65rem;">
-                                        0
-                                    </span>
-                                }
+                               class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Notifications" ? "active" : "")">
+                                <i class="nav-icon bi bi-bell-fill"></i>
+                                <p>Notifications</p>
                             </a>
                         </li>
                     }
-                    <partial name="_LoginPartial" />
+
+                    @* ── UNAUTHENTICATED ── *@
+                    @if (User.Identity == null || !User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a asp-area="Identity" asp-page="/Account/Login" class="nav-link">
+                                <i class="nav-icon bi bi-box-arrow-in-right"></i>
+                                <p>Login</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Identity" asp-page="/Account/Register" class="nav-link">
+                                <i class="nav-icon bi bi-person-plus-fill"></i>
+                                <p>Register</p>
+                            </a>
+                        </li>
+                    }
+
                 </ul>
+            </nav>
+        </div>
+    </aside>
+    @* ══════════════════════════════════════ END SIDEBAR ══════════════════════════════════════ *@
+
+
+    @* ══════════════════════════════════════ CONTENT WRAPPER ══════════════════════════════════════ *@
+    <div class="content-wrapper">
+
+        @* Page header strip *@
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <h1 class="m-0">@ViewData["Title"]</h1>
+                    </div>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <!-- Main Content section -->
-    <div class="container mt-4">
+        @* TempData toast triggers (rendered as hidden data, fired by JS below) *@
         @if (TempData["SuccessMessage"] != null)
         {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill"></i>
-                @TempData["SuccessMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            <span id="tempSuccess" class="d-none">@TempData["SuccessMessage"]</span>
         }
         @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                @TempData["ErrorMessage"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+            <span id="tempError" class="d-none">@TempData["ErrorMessage"]</span>
         }
-        @RenderBody()
-    </div>
 
-    <!-- Footer of website -->
-    <footer class="text-center py-3 mt-5">
-        <div class="container">
-            <p>&copy; @DateTime.Now.Year - Municipality Management System. All rights reserved.</p>
+        @* Main page content *@
+        <div class="content">
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+
+    </div>
+    @* ══════════════════════════════════════ END CONTENT WRAPPER ══════════════════════════════════════ *@
+
+
+    @* ══════════════════════════════════════ FOOTER ══════════════════════════════════════ *@
+    <footer class="main-footer text-muted small">
+        <strong>Municipality Management System</strong> &copy; @DateTime.Now.Year
+        <div class="float-end d-none d-sm-inline-block">
+            <b>Version</b> 0.7.0
         </div>
     </footer>
 
-    <!-- Bootstrap JS (for navbar toggling and other interactive features) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+@* End wrapper *@
 
-    @RenderSection("Scripts", required: false)
+@* ══════════════════════════════════════ SCRIPTS ══════════════════════════════════════ *@
 
-    @if (User.IsInRole("Citizen"))
-    {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
-        <script>
-            (function () {
-                // Connect to the SignalR hub
-                const connection = new signalR.HubConnectionBuilder()
-                    .withUrl("/notificationHub")
-                    .withAutomaticReconnect()
-                    .build();
+@* jQuery — must load before AdminLTE, DataTables, and Bootstrap JS *@
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 
-                // Listen for incoming notifications from the server
-                connection.on("ReceiveNotification", function (message) {
-                    // Update the badge count
-                    const badge = document.getElementById("notification-badge");
-                    if (badge) {
-                        const current = parseInt(badge.innerText) || 0;
-                        badge.innerText = current + 1;
-                        badge.classList.remove("d-none");
-                    }
+@* Bootstrap 5 bundle (includes Popper) — AdminLTE depends on this *@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-                    // Show a toast popup
-                    showToast(message);
-                });
+@* AdminLTE 3 JS *@
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
 
-                // Start the connection
-                connection.start()
-                    .then(() => console.log("SignalR connected."))
-                    .catch(err => console.warn("SignalR connection failed:", err));
+@* SignalR client — Notification dependency injection for notification service *@
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
 
-                // Handle reconnection
-                connection.onreconnected(() => {
-                    console.log("SignalR reconnected.");
-                });
+@* Chart.js *@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-                // Build and show a Bootstrap toast
-                function showToast(message) {
-                    const container = document.getElementById("toast-container");
-                    if (!container) return;
+@* CountUp.js *@
+<script src="https://cdn.jsdelivr.net/npm/countup.js@2.8.0/dist/countUp.umd.js"></script>
 
-                    const toastId = "toast-" + Date.now();
-                    const toastHtml = `
-                        <div id="${toastId}" class="toast align-items-center text-white border-0 show"
-                             role="alert" aria-live="assertive" aria-atomic="true"
-                             style="background: #002395;">
-                            <div class="d-flex">
-                                <div class="toast-body">
-                                    <i class="bi bi-bell-fill me-2" style="color: #C9A227;"></i>
-                                    ${message}
-                                </div>
-                                <button type="button" class="btn-close btn-close-white me-2 m-auto"
-                                        aria-label="Close"
-                                        onclick="document.getElementById('${toastId}').remove()">
-                                </button>
-                            </div>
-                        </div>`;
+@* DataTables + Bootstrap 5 adapter *@
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-                    container.insertAdjacentHTML("beforeend", toastHtml);
+@* SweetAlert2 *@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                    // Auto-remove after 6 seconds
-                    setTimeout(() => {
-                        const el = document.getElementById(toastId);
-                        if (el) el.remove();
-                    }, 6000);
+@* Toastify JS *@
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+@* ══ TOASTIFY — TempData messages ══ *@
+<script>
+    (function () {
+        function showToast(message, isError) {
+            Toastify({
+                text: message,
+                duration: 4000,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    background: isError ? "var(--sa-danger, #C53030)" : "var(--sa-green, #007A4D)",
+                    borderRadius: "6px",
+                    fontSize: "0.9rem",
+                    padding: "10px 18px",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)"
                 }
-            })();
-        </script>
-    }
+            }).showToast();
+        }
+
+        var successEl = document.getElementById("tempSuccess");
+        var errorEl   = document.getElementById("tempError");
+
+        if (successEl) showToast(successEl.textContent.trim(), false);
+        if (errorEl)   showToast(errorEl.textContent.trim(), true);
+    })();
+</script>
+
+
+@* ══ SIGNALR — Live bell badge + Toastify notification toast (Citizen only) ══ *@
+@if (User.IsInRole("Citizen"))
+{
+    <script>
+        (function () {
+            var connection = new signalR.HubConnectionBuilder()
+                .withUrl("/notificationHub")
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on("ReceiveNotification", function (message) {
+                // Update bell badge
+                var badge = document.getElementById("notifBadge");
+                if (badge) {
+                    var current = parseInt(badge.textContent, 10) || 0;
+                    badge.textContent = current + 1;
+                    badge.classList.remove("d-none");
+                }
+
+                // Show Toastify notification toast
+                Toastify({
+                    text: "🔔 " + message,
+                    duration: 6000,
+                    gravity: "top",
+                    position: "right",
+                    stopOnFocus: true,
+                    style: {
+                        background: "#002395",
+                        borderRadius: "6px",
+                        fontSize: "0.9rem",
+                        padding: "10px 18px",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+                    }
+                }).showToast();
+            });
+
+            connection.start()
+                .then(function () { console.log("SignalR connected."); })
+                .catch(function (err) { console.error("SignalR error:", err); });
+        })();
+    </script>
+}
+
+@await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

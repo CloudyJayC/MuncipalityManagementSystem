@@ -33,7 +33,21 @@ namespace MunicipalityManagementSystem.Controllers
             ViewData["PendingRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Pending");
             ViewData["InProgressRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "In Progress");
             ViewData["CompletedRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Completed");
+            ViewData["CancelledRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Cancelled");
             ViewData["TotalReports"] = await _context.Reports.CountAsync();
+
+            // Chart 1 — Service type breakdown (bar chart)
+            var serviceTypeData = await _context.ServiceRequests
+                .GroupBy(r => r.ServiceType)
+                .Select(g => new { ServiceType = g.Key, Count = g.Count() })
+                .OrderByDescending(x => x.Count)
+                .Take(8)
+                .ToListAsync();
+
+            ViewData["ChartLabels"] = System.Text.Json.JsonSerializer.Serialize(
+                serviceTypeData.Select(x => x.ServiceType).ToList());
+            ViewData["ChartCounts"] = System.Text.Json.JsonSerializer.Serialize(
+                serviceTypeData.Select(x => x.Count).ToList());
 
             return View();
         }

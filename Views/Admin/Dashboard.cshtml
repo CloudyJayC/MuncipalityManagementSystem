@@ -3,161 +3,292 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="fw-bold" style="color: #002395;">
-        <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
-    </h1>
-    <span class="text-muted">@DateTime.Now.ToString("dddd, dd MMMM yyyy")</span>
+@* ═══════════════════════════════════════════════════════════
+   STAT CARDS
+   ═══════════════════════════════════════════════════════════ *@
+<div class="row g-3 mb-4">
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:var(--sa-blue);">
+                <i class="bi bi-people-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Users</span>
+                <span class="info-box-number">
+                    <span id="statUsers">@ViewData["TotalUsers"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:var(--sa-green);">
+                <i class="bi bi-person-vcard-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Citizens</span>
+                <span class="info-box-number">
+                    <span id="statCitizens">@ViewData["TotalCitizens"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:var(--sa-gold);">
+                <i class="bi bi-person-badge-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Staff</span>
+                <span class="info-box-number">
+                    <span id="statStaff">@ViewData["TotalStaff"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:#6c757d;">
+                <i class="bi bi-file-earmark-text-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Reports</span>
+                <span class="info-box-number">
+                    <span id="statReports">@ViewData["TotalReports"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:#C9A227;">
+                <i class="bi bi-hourglass-split text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Pending</span>
+                <span class="info-box-number">
+                    <span id="statPending">@ViewData["PendingRequests"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:var(--sa-blue);">
+                <i class="bi bi-arrow-repeat text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">In Progress</span>
+                <span class="info-box-number">
+                    <span id="statInProgress">@ViewData["InProgressRequests"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:var(--sa-green);">
+                <i class="bi bi-check-circle-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Completed</span>
+                <span class="info-box-number">
+                    <span id="statCompleted">@ViewData["CompletedRequests"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background:var(--sa-danger);">
+                <i class="bi bi-x-circle-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Cancelled</span>
+                <span class="info-box-number">
+                    <span id="statCancelled">@ViewData["CancelledRequests"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<!-- Stats Grid -->
-<div class="row g-4 mb-5">
+@* ═══════════════════════════════════════════════════════════
+   CHARTS ROW
+   ═══════════════════════════════════════════════════════════ *@
+<div class="row g-3 mb-4">
 
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100" style="border-left: 5px solid #002395 !important;">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#002395;">
-                    <i class="bi bi-people-fill text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Total Users</div>
-                    <div class="fw-bold fs-3">@ViewData["TotalUsers"]</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#007A4D;">
-                    <i class="bi bi-person-vcard-fill text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Total Citizens</div>
-                    <div class="fw-bold fs-3">@ViewData["TotalCitizens"]</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#C9A227;">
-                    <i class="bi bi-person-badge-fill text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Total Staff</div>
-                    <div class="fw-bold fs-3">@ViewData["TotalStaff"]</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#6c757d;">
-                    <i class="bi bi-file-earmark-text-fill text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Total Reports</div>
-                    <div class="fw-bold fs-3">@ViewData["TotalReports"]</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    @* Doughnut — Request status breakdown *@
     <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#C9A227;">
-                    <i class="bi bi-hourglass-split text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Pending Requests</div>
-                    <div class="fw-bold fs-3">@ViewData["PendingRequests"]</div>
-                </div>
+        <div class="card shadow-sm h-100">
+            <div class="card-header text-white fw-semibold" style="background:var(--sa-blue);">
+                <i class="bi bi-pie-chart-fill me-2"></i>Request Status Breakdown
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center">
+                <canvas id="statusDoughnut" style="max-height:260px;"></canvas>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#002395;">
-                    <i class="bi bi-arrow-repeat text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">In Progress</div>
-                    <div class="fw-bold fs-3">@ViewData["InProgressRequests"]</div>
-                </div>
+    @* Bar — Requests by service type *@
+    <div class="col-md-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header text-white fw-semibold" style="background:var(--sa-blue);">
+                <i class="bi bi-bar-chart-fill me-2"></i>Requests by Service Type
             </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card shadow-sm border-0 h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="rounded-circle d-flex align-items-center justify-content-center"
-                     style="width:56px;height:56px;background:#007A4D;">
-                    <i class="bi bi-check-circle-fill text-white fs-4"></i>
-                </div>
-                <div>
-                    <div class="text-muted small">Completed Requests</div>
-                    <div class="fw-bold fs-3">@ViewData["CompletedRequests"]</div>
-                </div>
+            <div class="card-body">
+                <canvas id="serviceTypeBar" style="max-height:260px;"></canvas>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- Quick Links -->
-<h5 class="fw-semibold mb-3" style="color:#002395;">Quick Links</h5>
+@* ═══════════════════════════════════════════════════════════
+   QUICK LINKS
+   ═══════════════════════════════════════════════════════════ *@
 <div class="row g-3">
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <a asp-controller="Admin" asp-action="Users"
-           class="card shadow-sm border-0 text-decoration-none h-100 d-block p-3 text-center"
-           style="background:#002395;color:white;">
-            <i class="bi bi-people fs-2"></i>
-            <div class="mt-2 fw-semibold">User Management</div>
+           class="small-box text-decoration-none d-block shadow-sm"
+           style="background:var(--sa-blue);border-radius:8px;">
+            <div class="inner p-3 text-white">
+                <h4><i class="bi bi-people"></i></h4>
+                <p class="mb-0 fw-semibold">User Management</p>
+            </div>
         </a>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <a asp-controller="Admin" asp-action="CreateStaff"
-           class="card shadow-sm border-0 text-decoration-none h-100 d-block p-3 text-center"
-           style="background:#007A4D;color:white;">
-            <i class="bi bi-person-plus fs-2"></i>
-            <div class="mt-2 fw-semibold">Create Staff Account</div>
+           class="small-box text-decoration-none d-block shadow-sm"
+           style="background:var(--sa-green);border-radius:8px;">
+            <div class="inner p-3 text-white">
+                <h4><i class="bi bi-person-plus"></i></h4>
+                <p class="mb-0 fw-semibold">Create Staff</p>
+            </div>
         </a>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <a asp-controller="Citizens" asp-action="Index"
-           class="card shadow-sm border-0 text-decoration-none h-100 d-block p-3 text-center"
-           style="background:#C9A227;color:white;">
-            <i class="bi bi-person-vcard fs-2"></i>
-            <div class="mt-2 fw-semibold">Citizens</div>
+           class="small-box text-decoration-none d-block shadow-sm"
+           style="background:var(--sa-gold);border-radius:8px;">
+            <div class="inner p-3 text-white">
+                <h4><i class="bi bi-person-vcard"></i></h4>
+                <p class="mb-0 fw-semibold">Citizens</p>
+            </div>
         </a>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-6 col-md-3">
         <a asp-controller="ServiceRequests" asp-action="Index"
-           class="card shadow-sm border-0 text-decoration-none h-100 d-block p-3 text-center"
-           style="background:#6c757d;color:white;">
-            <i class="bi bi-clipboard2-check fs-2"></i>
-            <div class="mt-2 fw-semibold">Service Requests</div>
+           class="small-box text-decoration-none d-block shadow-sm"
+           style="background:#6c757d;border-radius:8px;">
+            <div class="inner p-3 text-white">
+                <h4><i class="bi bi-clipboard2-check"></i></h4>
+                <p class="mb-0 fw-semibold">Service Requests</p>
+            </div>
         </a>
     </div>
 
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+
+            @* ─── CountUp.js: animate stat numbers from 0 ─── *@
+            var stats = [
+                { id: "statUsers",      val: @(ViewData["TotalUsers"] ?? 0) },
+                { id: "statCitizens",   val: @(ViewData["TotalCitizens"] ?? 0) },
+                { id: "statStaff",      val: @(ViewData["TotalStaff"] ?? 0) },
+                { id: "statReports",    val: @(ViewData["TotalReports"] ?? 0) },
+                { id: "statPending",    val: @(ViewData["PendingRequests"] ?? 0) },
+                { id: "statInProgress", val: @(ViewData["InProgressRequests"] ?? 0) },
+                { id: "statCompleted",  val: @(ViewData["CompletedRequests"] ?? 0) },
+                { id: "statCancelled",  val: @(ViewData["CancelledRequests"] ?? 0) }
+            ];
+
+            stats.forEach(function (s) {
+                var el = document.getElementById(s.id);
+                if (el && s.val > 0) {
+                    new countUp.CountUp(s.id, s.val, {
+                        duration: 1.8,
+                        useEasing: true
+                    }).start();
+                }
+            });
+
+            @* ─── Chart.js: Doughnut chart for status breakdown ─── *@
+            var doughnutCtx = document.getElementById("statusDoughnut").getContext("2d");
+            new Chart(doughnutCtx, {
+                type: "doughnut",
+                data: {
+                    labels: ["Pending", "In Progress", "Completed", "Cancelled"],
+                    datasets: [{
+                        data: [
+                            @(ViewData["PendingRequests"] ?? 0),
+                            @(ViewData["InProgressRequests"] ?? 0),
+                            @(ViewData["CompletedRequests"] ?? 0),
+                            @(ViewData["CancelledRequests"] ?? 0)
+                        ],
+                        backgroundColor: ["#C9A227", "#002395", "#007A4D", "#C53030"],
+                        borderWidth: 2,
+                        borderColor: "#fff"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: "bottom" }
+                    },
+                    animation: { animateRotate: true, duration: 1000 }
+                }
+            });
+
+            @* ─── Chart.js: Bar chart for requests by service type ─── *@
+            var barCtx = document.getElementById("serviceTypeBar").getContext("2d");
+            new Chart(barCtx, {
+                type: "bar",
+                data: {
+                    labels: @Html.Raw(ViewData["ChartLabels"] ?? "[]"),
+                    datasets: [{
+                        label: "Requests",
+                        data: @Html.Raw(ViewData["ChartCounts"] ?? "[]"),
+                        backgroundColor: "rgba(0, 35, 149, 0.75)",
+                        borderColor: "#002395",
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    },
+                    animation: { duration: 1000 }
+                }
+            });
+
+        })();
+    </script>
+}

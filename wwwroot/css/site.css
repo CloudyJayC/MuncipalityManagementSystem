@@ -1,4 +1,4 @@
-﻿/* ========================================
+/* ========================================
    Minimalistic South African Municipality Theme
    ======================================== */
 
@@ -9,13 +9,15 @@
     --border-color: #E2E8F0;
     --text-primary: #1F2933;
     --text-secondary: #6B7280;
+    --text-invert: #FFFFFF;
     
     /* South African Accent System (20% usage) */
     --sa-blue: #002395;
     --sa-green: #007A4D;
     --sa-gold: #C9A227;
-    --sa-red: #C53030;
-    
+    --sa-danger: #C53030;
+    --sa-secondary: #6c757d;
+
     /* Additional neutrals */
     --light-gray: #F9FAFB;
     --subtle-hover: #F1F5F9;
@@ -170,8 +172,8 @@ body {
 
 .badge-danger {
     background-color: rgba(197, 48, 48, 0.1);
-    color: var(--sa-red);
-    border: 1px solid var(--sa-red);
+    color: var(--sa-danger);
+    border: 1px solid var(--sa-danger);
 }
 
 .badge-secondary {
@@ -217,9 +219,9 @@ body {
 }
 
 .btn-danger {
-    background-color: var(--sa-red);
+    background-color: var(--sa-danger);
     color: white;
-    border: 1px solid var(--sa-red);
+    border: 1px solid var(--sa-danger);
 }
 
 .btn-danger:hover {
@@ -296,7 +298,7 @@ body {
 }
 
 .invalid-feedback {
-    color: var(--sa-red);
+    color: var(--sa-danger);
     font-size: 0.85rem;
     display: block;
     margin-top: 0.25rem;
@@ -322,8 +324,8 @@ body {
 
 .alert-danger {
     background-color: rgba(197, 48, 48, 0.05);
-    color: var(--sa-red);
-    border-left-color: var(--sa-red);
+    color: var(--sa-danger);
+    border-left-color: var(--sa-danger);
 }
 
 .alert-warning {
@@ -435,7 +437,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-danger {
-    color: var(--sa-red) !important;
+    color: var(--sa-danger) !important;
 }
 
 .text-warning {

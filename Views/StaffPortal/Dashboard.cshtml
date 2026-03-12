@@ -18,7 +18,7 @@
         <div class="col-md-4 mb-3">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-hourglass-split me-3" style="font-size: 2rem; color: #C9A227;"></i>
+                    <i class="bi bi-hourglass-split me-3" style="font-size: 2rem; color: var(--sa-gold);"></i>
                     <div>
                         <p class="text-secondary mb-0" style="font-size: 0.85rem;">Pending Requests</p>
                         <h3 class="mb-0">@ViewData["PendingCount"]</h3>
@@ -30,7 +30,7 @@
         <div class="col-md-4 mb-3">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-arrow-repeat me-3" style="font-size: 2rem; color: #002395;"></i>
+                    <i class="bi bi-arrow-repeat me-3" style="font-size: 2rem; color: var(--sa-blue);"></i>
                     <div>
                         <p class="text-secondary mb-0" style="font-size: 0.85rem;">In Progress</p>
                         <h3 class="mb-0">@ViewData["InProgressCount"]</h3>
@@ -42,7 +42,7 @@
         <div class="col-md-4 mb-3">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-check-circle me-3" style="font-size: 2rem; color: #007A4D;"></i>
+                    <i class="bi bi-check-circle me-3" style="font-size: 2rem; color: var(--sa-green);"></i>
                     <div>
                         <p class="text-secondary mb-0" style="font-size: 0.85rem;">Completed</p>
                         <h3 class="mb-0">@ViewData["CompletedCount"]</h3>
@@ -54,7 +54,7 @@
         <div class="col-md-6 mb-3">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-people me-3" style="font-size: 2rem; color: #002395;"></i>
+                    <i class="bi bi-people me-3" style="font-size: 2rem; color: var(--sa-blue);"></i>
                     <div>
                         <p class="text-secondary mb-0" style="font-size: 0.85rem;">Total Citizens</p>
                         <h3 class="mb-0">@ViewData["TotalCitizens"]</h3>
@@ -66,7 +66,7 @@
         <div class="col-md-6 mb-3">
             <div class="card h-100">
                 <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-file-earmark-text me-3" style="font-size: 2rem; color: #C53030;"></i>
+                    <i class="bi bi-file-earmark-text me-3" style="font-size: 2rem; color: var(--sa-danger);"></i>
                     <div>
                         <p class="text-secondary mb-0" style="font-size: 0.85rem;">Total Reports</p>
                         <h3 class="mb-0">@ViewData["TotalReports"]</h3>
@@ -91,6 +91,7 @@
             }
             else
             {
+                <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
@@ -131,6 +132,7 @@
                         }
                     </tbody>
                 </table>
+                </div>
             }
         </div>
     </div>

@@ -1,8 +1,6 @@
 @model MunicipalityManagementSystem.Models.Report
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     ViewData["Title"] = "Edit Report";
 }
 
@@ -11,7 +9,8 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Edit">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ReportID" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 

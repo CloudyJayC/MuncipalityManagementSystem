@@ -1,8 +1,6 @@
 @model MunicipalityManagementSystem.Models.Report
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     ViewData["Title"] = "Delete Report";
 }
 
@@ -25,9 +23,32 @@
     <dd class="col-sm-10">@(Model.Citizen?.FullName ?? "Not Assigned")</dd>
 </dl>
 
-<form asp-action="Delete" method="post">
+<form id="deleteReportConfirmForm" asp-action="Delete" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="ReportID" />
-    <input type="submit" value="Delete" class="btn btn-danger" />
+    <button type="button" class="btn btn-danger sa-confirm-delete">Delete</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.sa-confirm-delete').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#C53030',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteReportConfirmForm').submit();
+                }
+            });
+        });
+    });
+</script>
+}

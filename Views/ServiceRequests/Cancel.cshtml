@@ -12,6 +12,7 @@
         </h2>
         <p class="lead">Are you sure you want to cancel this request?</p>
 
+        <div class="table-responsive">
         <table class="table table-bordered mt-3">
             <tr>
                 <th>Service Type</th>
@@ -26,10 +27,12 @@
                 <td><span class="badge bg-warning text-dark">@Model.Status</span></td>
             </tr>
         </table>
+        </div>
 
-        <form asp-action="Cancel">
+        <form id="cancelRequestConfirmForm" asp-action="Cancel" method="post">
+            @Html.AntiForgeryToken()
             <input type="hidden" asp-for="RequestID" />
-            <button type="submit" class="btn btn-warning">
+            <button type="button" class="btn btn-warning sa-confirm-cancel">
                 <i class="bi bi-x-circle"></i> Yes, Cancel Request
             </button>
             <a asp-action="Index" class="btn btn-secondary ms-2">
@@ -38,3 +41,26 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.sa-confirm-cancel').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Cancel this request?',
+                text: 'This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#C53030',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    document.getElementById('cancelRequestConfirmForm').submit();
+                }
+            });
+        });
+    });
+</script>
+}

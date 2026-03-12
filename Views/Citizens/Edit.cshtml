@@ -1,8 +1,6 @@
 @model MunicipalityManagementSystem.Models.Citizen
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     ViewData["Title"] = "Edit Citizen";
 }
 
@@ -11,7 +9,8 @@
 <div class="card shadow-sm p-3">
     <h4>Update Details</h4>
     <hr />
-    <form asp-action="Edit">
+    <form asp-action="Edit" method="post">
+        @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="CitizenID" />
 

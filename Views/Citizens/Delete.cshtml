@@ -2,8 +2,6 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     ViewData["Title"] = "Delete Citizen";
 }
 
@@ -34,9 +32,33 @@
         <dd class="col-sm-9">@Html.DisplayFor(model => model.RegistrationDate)</dd>
     </dl>
 
-    <form asp-action="Delete">
+    <form id="deleteCitizenConfirmForm" asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="CitizenID" />
-        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-danger sa-confirm-delete">Delete</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
+
+@section Scripts {
+<script>
+    document.querySelectorAll('.sa-confirm-delete').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#C53030',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteCitizenConfirmForm').submit();
+                }
+            });
+        });
+    });
+</script>
+}

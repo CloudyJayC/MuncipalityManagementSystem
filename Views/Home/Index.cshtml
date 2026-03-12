@@ -4,7 +4,7 @@
 }
 
 <div class="container mt-5">
-    <div class="jumbotron">
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1 class="display-5">Welcome to Municipality Management System</h1>
@@ -26,7 +26,7 @@
                 }
             </div>
             <div class="col-md-4 text-center">
-                <i class="bi bi-building" style="font-size: 6rem; color: #002395; opacity: 0.7;"></i>
+                <i class="bi bi-building" style="font-size: 6rem; color: var(--sa-blue); opacity: 0.7;"></i>
             </div>
         </div>
     </div>
@@ -38,13 +38,13 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-people" style="font-size: 2rem; color: #002395;"></i>
+                            <i class="bi bi-people" style="font-size: 2rem; color: var(--sa-blue);"></i>
                             <h5 class="card-title ms-3 mb-0">Citizen Management</h5>
                         </div>
                         <p class="card-text text-secondary">
                             Create, update, and manage citizen records with comprehensive details including contact information and registration dates.
                         </p>
-                        <a asp-controller="Citizens" asp-action="Index" class="text-primary fw-500">Manage Citizens →</a>
+                        <a asp-controller="Citizens" asp-action="Index" class="text-primary fw-semibold">Manage Citizens →</a>
                     </div>
                 </div>
             </div>
@@ -54,13 +54,13 @@
             <div class="card h-100">
                 <div class="card-body">
                     <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-clipboard-check" style="font-size: 2rem; color: #007A4D;"></i>
+                        <i class="bi bi-clipboard-check" style="font-size: 2rem; color: var(--sa-green);"></i>
                         <h5 class="card-title ms-3 mb-0">Service Requests</h5>
                     </div>
                     <p class="card-text text-secondary">
                         Track and manage all citizen service requests with status updates. Improve response times and service delivery efficiency.
                     </p>
-                    <a asp-controller="ServiceRequests" asp-action="Index" class="text-primary fw-500">View Requests →</a>
+                    <a asp-controller="ServiceRequests" asp-action="Index" class="text-primary fw-semibold">View Requests →</a>
                 </div>
             </div>
         </div>
@@ -71,13 +71,13 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-briefcase" style="font-size: 2rem; color: #C9A227;"></i>
+                            <i class="bi bi-briefcase" style="font-size: 2rem; color: var(--sa-gold);"></i>
                             <h5 class="card-title ms-3 mb-0">Staff Directory</h5>
                         </div>
                         <p class="card-text text-secondary">
                             Maintain a comprehensive database of municipal staff with department assignments, positions, and contact information.
                         </p>
-                        <a asp-controller="Staff" asp-action="Index" class="text-primary fw-500">View Staff →</a>
+                        <a asp-controller="Staff" asp-action="Index" class="text-primary fw-semibold">View Staff →</a>
                     </div>
                 </div>
             </div>
@@ -89,13 +89,13 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-file-earmark-text" style="font-size: 2rem; color: #C53030;"></i>
+                            <i class="bi bi-file-earmark-text" style="font-size: 2rem; color: var(--sa-danger);"></i>
                             <h5 class="card-title ms-3 mb-0">Reports</h5>
                         </div>
                         <p class="card-text text-secondary">
                             Generate and track comprehensive reports related to citizens and municipal operations for data-driven decision making.
                         </p>
-                        <a asp-controller="Reports" asp-action="Index" class="text-primary fw-500">View Reports →</a>
+                        <a asp-controller="Reports" asp-action="Index" class="text-primary fw-semibold">View Reports →</a>
                     </div>
                 </div>
             </div>
@@ -104,16 +104,16 @@
         @if (User.IsInRole("Admin"))
         {
             <div class="col-md-6 mb-3">
-                <div class="card h-100" style="border-top: 3px solid #002395;">
+                <div class="card h-100" style="border-top: 3px solid var(--sa-blue);">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-shield-lock" style="font-size: 2rem; color: #002395;"></i>
+                            <i class="bi bi-shield-lock" style="font-size: 2rem; color: var(--sa-blue);"></i>
                             <h5 class="card-title ms-3 mb-0">Admin Portal</h5>
                         </div>
                         <p class="card-text text-secondary">
                             Manage user accounts, create staff logins, and view system-wide statistics from the admin dashboard.
                         </p>
-                        <a asp-controller="Admin" asp-action="Dashboard" class="text-primary fw-500">Go to Admin Portal →</a>
+                        <a asp-controller="Admin" asp-action="Dashboard" class="text-primary fw-semibold">Go to Admin Portal →</a>
                     </div>
                 </div>
             </div>

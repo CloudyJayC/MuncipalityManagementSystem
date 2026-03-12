@@ -69,9 +69,12 @@
                                         </a>
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <a asp-action="Delete" asp-route-id="@item.CitizenID" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?');">
+                                            <form id="deleteCitizenForm_@item.CitizenID" asp-action="Delete" asp-route-id="@item.CitizenID" method="post" style="display: none;">
+                                                @Html.AntiForgeryToken()
+                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger sa-delete-citizen" data-id="@item.CitizenID" data-name="@item.FullName" title="Delete">
                                                 <i class="bi bi-trash"></i>
-                                            </a>
+                                            </button>
                                         }
                                     </div>
                                 </td>
@@ -97,6 +100,30 @@
                 columnDefs: [
                     { orderable: false, targets: -1 }
                 ]
+            });
+        });
+
+        // SweetAlert2 for citizen deletion
+        document.querySelectorAll('.sa-delete-citizen').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const citizenId = this.getAttribute('data-id');
+                const citizenName = this.getAttribute('data-name');
+
+                Swal.fire({
+                    title: 'Delete Citizen?',
+                    text: 'You are about to delete ' + citizenName + '. This cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C53030',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteCitizenForm_' + citizenId).submit();
+                    }
+                });
             });
         });
     </script>

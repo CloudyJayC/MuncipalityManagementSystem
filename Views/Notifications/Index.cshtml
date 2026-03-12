@@ -96,22 +96,51 @@ else
                             </form>
                         }
 
-                        <form asp-action="Delete"
+                        <form id="deleteNotifForm_@notification.Id"
+                              asp-action="Delete"
                               asp-controller="Notifications"
                               asp-route-id="@notification.Id"
                               method="post"
-                              onsubmit="return confirm('Delete this notification?')">
+                              style="display: none;">
                             @Html.AntiForgeryToken()
-                            <button type="submit"
-                                    class="btn btn-sm btn-outline-danger"
-                                    title="Delete notification">
-                                <i class="bi bi-trash"></i>
-                            </button>
                         </form>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger sa-delete-notif"
+                                data-id="@notification.Id"
+                                title="Delete notification">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </div>
 
                 </div>
             </div>
         }
     </div>
+}
+
+@section Scripts {
+    <script>
+        // SweetAlert2 for notification deletion
+        document.querySelectorAll('.sa-delete-notif').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const notifId = this.getAttribute('data-id');
+
+                Swal.fire({
+                    title: 'Delete Notification?',
+                    text: 'This notification will be permanently removed.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C53030',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteNotifForm_' + notifId).submit();
+                    }
+                });
+            });
+        });
+    </script>
 }

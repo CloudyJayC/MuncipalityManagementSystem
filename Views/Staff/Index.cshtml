@@ -71,9 +71,12 @@
                                             <a asp-action="Edit" asp-route-id="@item.StaffID" class="btn btn-sm btn-primary" title="Edit">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@item.StaffID" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?');">
+                                            <form id="deleteStaffForm_@item.StaffID" asp-action="Delete" asp-route-id="@item.StaffID" method="post" style="display: none;">
+                                                @Html.AntiForgeryToken()
+                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger sa-delete-staff" data-id="@item.StaffID" data-name="@item.FullName" title="Delete">
                                                 <i class="bi bi-trash"></i>
-                                            </a>
+                                            </button>
                                         }
                                     </div>
                                 </td>
@@ -99,6 +102,30 @@
                 columnDefs: [
                     { orderable: false, targets: -1 }
                 ]
+            });
+        });
+
+        // SweetAlert2 for staff deletion
+        document.querySelectorAll('.sa-delete-staff').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const staffId = this.getAttribute('data-id');
+                const staffName = this.getAttribute('data-name');
+
+                Swal.fire({
+                    title: 'Delete Staff Member?',
+                    text: 'You are about to delete ' + staffName + '. This cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C53030',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteStaffForm_' + staffId).submit();
+                    }
+                });
             });
         });
     </script>

@@ -69,9 +69,12 @@
                                         </a>
                                         @if (User.IsInRole("Admin"))
                                         {
-                                            <a asp-action="Delete" asp-route-id="@item.ReportID" class="btn btn-sm btn-danger" title="Delete" onclick="return confirm('Are you sure?');">
+                                            <form id="deleteReportForm_@item.ReportID" asp-action="Delete" asp-route-id="@item.ReportID" method="post" style="display: none;">
+                                                @Html.AntiForgeryToken()
+                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger sa-delete-report" data-id="@item.ReportID" data-type="@item.ReportType" title="Delete">
                                                 <i class="bi bi-trash"></i>
-                                            </a>
+                                            </button>
                                         }
                                     </div>
                                 </td>
@@ -98,6 +101,30 @@
                 columnDefs: [
                     { orderable: false, targets: -1 }
                 ]
+            });
+        });
+
+        // SweetAlert2 for report deletion
+        document.querySelectorAll('.sa-delete-report').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const reportId = this.getAttribute('data-id');
+                const reportType = this.getAttribute('data-type');
+
+                Swal.fire({
+                    title: 'Delete Report?',
+                    text: 'You are about to delete the report ' + reportType + '. This cannot be undone.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C53030',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteReportForm_' + reportId).submit();
+                    }
+                });
             });
         });
     </script>

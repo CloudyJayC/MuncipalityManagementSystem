@@ -59,14 +59,21 @@
                             <td class="text-center align-middle pe-3">
                                 @if (u.Id != currentUserId)
                                 {
-                                    <form asp-controller="Admin" asp-action="DeleteUser" method="post"
-                                          onsubmit="return confirm('Are you sure you want to delete this user? This cannot be undone.');">
+                                    <form id="deleteUserForm_@u.Id"
+                                          asp-controller="Admin"
+                                          asp-action="DeleteUser"
+                                          method="post"
+                                          style="display: none;">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@u.Id" />
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="bi bi-trash"></i> Delete
-                                        </button>
                                     </form>
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger sa-delete-user"
+                                            data-id="@u.Id"
+                                            data-email="@u.Email"
+                                            data-name="@u.FullName">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
                                 }
                                 else
                                 {
@@ -86,3 +93,32 @@
         <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
     </a>
 </div>
+
+@section Scripts {
+    <script>
+        // SweetAlert2 for user deletion
+        document.querySelectorAll('.sa-delete-user').forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const userId = this.getAttribute('data-id');
+                const userEmail = this.getAttribute('data-email');
+                const userName = this.getAttribute('data-name');
+
+                Swal.fire({
+                    title: 'Delete User Account?',
+                    html: 'You are about to permanently delete <strong>' + userName + '</strong> (' + userEmail + ').<br><br>Their citizen or staff record will be detached but preserved.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C53030',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete account',
+                    cancelButtonText: 'Cancel'
+                }).then(function(result) {
+                    if (result.isConfirmed) {
+                        document.getElementById('deleteUserForm_' + userId).submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

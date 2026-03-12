@@ -28,7 +28,7 @@
             }
             else
             {
-                <table class="table table-hover mb-0">
+                <table id="dataTable" class="table table-hover mb-0">
                     <thead>
                         <tr>
                             <th>Report Type</th>
@@ -83,3 +83,22 @@
         </div>
     </div>
 </div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#dataTable").DataTable({
+                pageLength: 10,
+                order: [[3, "desc"]],
+                language: {
+                    search: "Search reports:",
+                    lengthMenu: "Show _MENU_ reports",
+                    info: "Showing _START_ to _END_ of _TOTAL_ reports",
+                    emptyTable: "No reports found."
+                },
+                columnDefs: [
+                    { orderable: false, targets: -1 }
+                ]
+            });
+        });
+    </script>
+}

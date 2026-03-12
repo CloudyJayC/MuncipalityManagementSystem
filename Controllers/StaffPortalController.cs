@@ -38,10 +38,9 @@ namespace MunicipalityManagementSystem.Controllers
 
             // Stat cards
             ViewData["TotalCitizens"] = await _context.Citizens.CountAsync();
-            ViewData["TotalRequests"] = await _context.ServiceRequests.CountAsync();
-            ViewData["PendingRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Pending");
-            ViewData["InProgressRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "In Progress");
-            ViewData["CompletedRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Completed");
+            ViewData["PendingCount"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Pending");
+            ViewData["InProgressCount"] = await _context.ServiceRequests.CountAsync(r => r.Status == "In Progress");
+            ViewData["CompletedCount"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Completed");
             ViewData["TotalReports"] = await _context.Reports.CountAsync();
 
             // 5 most recent service requests for the recent activity table
@@ -50,7 +49,6 @@ namespace MunicipalityManagementSystem.Controllers
                 .OrderByDescending(r => r.RequestDate)
                 .Take(5)
                 .ToListAsync();
-            ViewData["RecentRequests"] = recentRequests;
 
             // Line chart — requests created per day for the last 7 days
             var today = DateTime.Today;
@@ -77,7 +75,7 @@ namespace MunicipalityManagementSystem.Controllers
             ViewData["LineChartLabels"] = System.Text.Json.JsonSerializer.Serialize(chartLabels);
             ViewData["LineChartCounts"] = System.Text.Json.JsonSerializer.Serialize(chartCounts);
 
-            return View();
+            return View(recentRequests);
         }
     }
 }

@@ -15,11 +15,16 @@ namespace MunicipalityManagementSystem.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<CitizensController> _logger;
 
-        public CitizensController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CitizensController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            ILogger<CitizensController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: Citizens
@@ -82,12 +87,13 @@ namespace MunicipalityManagementSystem.Controllers
                 TempData["SuccessMessage"] = "Citizen added successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
-			{
-				ModelState.AddModelError("", "An error occurred while saving the data. Please try again.");
-				return View(citizen);
-			}
-		}
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating citizen record for email {Email}", citizen.Email);
+                ModelState.AddModelError("", "An error occurred while saving the data. Please try again.");
+                return View(citizen);
+            }
+        }
 
         // GET: Citizens/Edit/5
         [Authorize(Roles = "Admin")]

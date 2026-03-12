@@ -27,7 +27,7 @@ namespace MunicipalityManagementSystem.Controllers
         // GET: Admin/Dashboard
         public async Task<IActionResult> Dashboard()
         {
-            ViewData["TotalUsers"] = _userManager.Users.Count();
+            ViewData["TotalUsers"] = await _userManager.Users.CountAsync();
             ViewData["TotalCitizens"] = await _context.Citizens.CountAsync();
             ViewData["TotalStaff"] = await _context.Staffs.CountAsync();
             ViewData["PendingRequests"] = await _context.ServiceRequests.CountAsync(r => r.Status == "Pending");
@@ -41,7 +41,7 @@ namespace MunicipalityManagementSystem.Controllers
         // GET: Admin/Users
         public async Task<IActionResult> Users()
         {
-            var users = _userManager.Users.ToList();
+            var users = await _userManager.Users.ToListAsync();
 
             var userViewModels = new List<AdminUserViewModel>();
 

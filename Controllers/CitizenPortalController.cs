@@ -37,6 +37,14 @@ namespace MunicipalityManagementSystem.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
+            // Mini stat strip — scoped to this citizen only
+            ViewData["TotalRequests"] = await _context.ServiceRequests
+                .CountAsync(r => r.CitizenID == citizen.CitizenID);
+            ViewData["PendingRequests"] = await _context.ServiceRequests
+                .CountAsync(r => r.CitizenID == citizen.CitizenID && r.Status == "Pending");
+            ViewData["CompletedRequests"] = await _context.ServiceRequests
+                .CountAsync(r => r.CitizenID == citizen.CitizenID && r.Status == "Completed");
+
             return View(citizen);
         }
 

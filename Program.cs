@@ -5,6 +5,7 @@ using MunicipalityManagementSystem.Data;
 using MunicipalityManagementSystem.Hubs;
 using MunicipalityManagementSystem.Models;
 using MunicipalityManagementSystem.Services;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,25 +122,27 @@ app.MapRazorPages();
 // Map SignalR hub endpoint
 app.MapHub<NotificationHub>("/notificationHub");
 
-// seeds the roles and default admin account
+// ── Seed roles and accounts ───────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
-    // This command creates roles if they do not exist in the database
+    // Ensure all roles exist in every environment
     string[] roles = { "Admin", "Staff", "Citizen" };
     foreach (var role in roles)
     {
         if (!await roleManager.RoleExistsAsync(role))
-        {
             await roleManager.CreateAsync(new IdentityRole(role));
-        }
     }
 
-    //default admin account for testing purposes, should be removed later in production
-    string adminEmail = "admin@municipality.com";
-    string adminPassword = "Admin1234";
+    // ── Seed admin account (all environments) ─────────────────────────────
+    string adminEmail = config["Seed:AdminEmail"]
+        ?? throw new InvalidOperationException("Seed:AdminEmail is not configured.");
+    string adminPassword = config["Seed:AdminPassword"]
+        ?? throw new InvalidOperationException("Seed:AdminPassword is not configured.");
 
     if (await userManager.FindByEmailAsync(adminEmail) == null)
     {
@@ -156,42 +159,53 @@ using (var scope = app.Services.CreateScope())
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");
+            logger.LogInformation("Seeded admin account: {Email}", adminEmail);
+        }
+        else
+        {
+            logger.LogError("Failed to seed admin account: {Errors}",
+                string.Join(", ", result.Errors.Select(e => e.Description)));
         }
     }
-    //default staff account for testing purposes, should be removed later in production
-    string staffEmail = "staff@municipality.com";
-    string staffPassword = "Staff1234!";
 
-    if (await userManager.FindByEmailAsync(staffEmail) == null)
+    // ── Seed test staff account (development only) ─────────────────────────
+    if (app.Environment.IsDevelopment())
     {
-        var staffUser = new ApplicationUser
-        {
-            UserName = staffEmail,
-            Email = staffEmail,
-            FirstName = "Test",
-            LastName = "Staff",
-            EmailConfirmed = true
-        };
+        string staffEmail = config["Seed:StaffEmail"]
+            ?? throw new InvalidOperationException("Seed:StaffEmail is not configured.");
+        string staffPassword = config["Seed:StaffPassword"]
+            ?? throw new InvalidOperationException("Seed:StaffPassword is not configured.");
 
-        var result = await userManager.CreateAsync(staffUser, staffPassword);
-        if (result.Succeeded)
+        if (await userManager.FindByEmailAsync(staffEmail) == null)
         {
-            await userManager.AddToRoleAsync(staffUser, "Staff");
-
-            // Create linked Staff directory entry
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var staffRecord = new MunicipalityManagementSystem.Models.Staff
+            var staffUser = new ApplicationUser
             {
-                FullName = "Test Staff",
-                Position = "General Staff",
-                Department = "Administration",
+                UserName = staffEmail,
                 Email = staffEmail,
-                PhoneNumber = "+27000000000",
-                HireDate = DateTime.Now,
-                UserId = staffUser.Id
+                FirstName = "Test",
+                LastName = "Staff",
+                EmailConfirmed = true
             };
-            dbContext.Staffs.Add(staffRecord);
-            await dbContext.SaveChangesAsync();
+
+            var result = await userManager.CreateAsync(staffUser, staffPassword);
+            if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(staffUser, "Staff");
+
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                dbContext.Staffs.Add(new MunicipalityManagementSystem.Models.Staff
+                {
+                    FullName = "Test Staff",
+                    Position = "General Staff",
+                    Department = "Administration",
+                    Email = staffEmail,
+                    PhoneNumber = "+27000000000",
+                    HireDate = DateTime.Now,
+                    UserId = staffUser.Id
+                });
+                await dbContext.SaveChangesAsync();
+                logger.LogInformation("Seeded development staff account: {Email}", staffEmail);
+            }
         }
     }
 }

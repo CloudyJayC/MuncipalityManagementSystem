@@ -524,3 +524,4 @@ FodyWeavers.xsd
 # Environment-specific configuration files
 appsettings.Development.json
 appsettings.json
+/appsettings.Development.cs

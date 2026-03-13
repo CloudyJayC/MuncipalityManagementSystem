@@ -5,93 +5,113 @@
     ViewData["Title"] = "Staff Dashboard";
 }
 
-<div class="container mt-4">
+@* ═══════════════════════════════════════════════════════════
+   WELCOME HEADER
+   ═══════════════════════════════════════════════════════════ *@
+<div class="mb-4">
+    <h4 class="fw-bold" style="color: var(--sa-blue);">
+        <i class="bi bi-person-badge-fill me-2"></i>Welcome, @ViewData["StaffName"]
+    </h4>
+    <p class="text-secondary mb-0">Here's an overview of current municipal operations.</p>
+</div>
 
-    <!-- Welcome Header -->
-    <div class="mb-4">
-        <h1 class="mb-0">Welcome, @ViewData["StaffName"]</h1>
-        <p class="text-secondary mt-1">Here's an overview of current municipal operations.</p>
-    </div>
+@* ═══════════════════════════════════════════════════════════
+   STAT CARDS
+   ═══════════════════════════════════════════════════════════ *@
+<div class="row g-3 mb-4">
 
-    <!-- Stats Cards -->
-    <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-hourglass-split me-3" style="font-size: 2rem; color: var(--sa-gold);"></i>
-                    <div>
-                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Pending Requests</p>
-                        <h3 class="mb-0">@ViewData["PendingCount"]</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-arrow-repeat me-3" style="font-size: 2rem; color: var(--sa-blue);"></i>
-                    <div>
-                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">In Progress</p>
-                        <h3 class="mb-0">@ViewData["InProgressCount"]</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card h-100">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-check-circle me-3" style="font-size: 2rem; color: var(--sa-green);"></i>
-                    <div>
-                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Completed</p>
-                        <h3 class="mb-0">@ViewData["CompletedCount"]</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <div class="card h-100">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-people me-3" style="font-size: 2rem; color: var(--sa-blue);"></i>
-                    <div>
-                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Total Citizens</p>
-                        <h3 class="mb-0">@ViewData["TotalCitizens"]</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-3">
-            <div class="card h-100">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-file-earmark-text me-3" style="font-size: 2rem; color: var(--sa-danger);"></i>
-                    <div>
-                        <p class="text-secondary mb-0" style="font-size: 0.85rem;">Total Reports</p>
-                        <h3 class="mb-0">@ViewData["TotalReports"]</h3>
-                    </div>
-                </div>
+    <div class="col-6 col-md-4">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background: var(--sa-gold);">
+                <i class="bi bi-hourglass-split text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Pending</span>
+                <span class="info-box-number">
+                    <span id="statPending">@ViewData["PendingCount"]</span>
+                </span>
             </div>
         </div>
     </div>
 
-    <!-- Recent Service Requests -->
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span><i class="bi bi-clock-history"></i> Recent Service Requests</span>
-            <a asp-controller="ServiceRequests" asp-action="Index" class="btn btn-sm btn-primary">View All</a>
+    <div class="col-6 col-md-4">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background: var(--sa-blue);">
+                <i class="bi bi-arrow-repeat text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">In Progress</span>
+                <span class="info-box-number">
+                    <span id="statInProgress">@ViewData["InProgressCount"]</span>
+                </span>
+            </div>
         </div>
-        <div class="card-body p-0">
-            @if (!Model.Any())
-            {
-                <div class="p-4 text-center">
-                    <p class="text-secondary mb-0">No service requests yet.</p>
-                </div>
-            }
-            else
-            {
-                <div class="table-responsive">
+    </div>
+
+    <div class="col-6 col-md-4">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background: var(--sa-green);">
+                <i class="bi bi-check-circle-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Completed</span>
+                <span class="info-box-number">
+                    <span id="statCompleted">@ViewData["CompletedCount"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-6">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background: var(--sa-blue);">
+                <i class="bi bi-person-vcard-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Citizens</span>
+                <span class="info-box-number">
+                    <span id="statCitizens">@ViewData["TotalCitizens"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-6">
+        <div class="info-box shadow-sm mb-0">
+            <span class="info-box-icon" style="background: var(--sa-danger);">
+                <i class="bi bi-file-earmark-text-fill text-white"></i>
+            </span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Reports</span>
+                <span class="info-box-number">
+                    <span id="statReports">@ViewData["TotalReports"]</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@* ═══════════════════════════════════════════════════════════
+   RECENT SERVICE REQUESTS
+   ═══════════════════════════════════════════════════════════ *@
+<div class="card shadow-sm">
+    <div class="card-header text-white fw-semibold d-flex justify-content-between align-items-center"
+         style="background: var(--sa-blue);">
+        <span><i class="bi bi-clock-history me-2"></i>Recent Service Requests</span>
+        <a asp-controller="ServiceRequests" asp-action="Index"
+           class="btn btn-sm btn-light" style="color: var(--sa-blue);">View All</a>
+    </div>
+    <div class="card-body p-0">
+        @if (!Model.Any())
+        {
+            <div class="p-4 text-center">
+                <p class="text-secondary mb-0">No service requests yet.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
                 <table class="table table-hover mb-0">
                     <thead>
                         <tr>
@@ -113,18 +133,19 @@
                                     @{
                                         var badgeClass = item.Status?.ToLower() switch
                                         {
-                                                            "completed" => "bg-success text-white",
-                                                            "pending" => "bg-warning text-dark",
-                                                            "in progress" => "bg-primary text-white",
-                                                            "cancelled" => "bg-secondary text-white",
+                                            "completed" => "bg-success text-white",
+                                            "pending" => "bg-warning text-dark",
+                                            "in progress" => "bg-primary text-white",
+                                            "cancelled" => "bg-secondary text-white",
                                             _ => "bg-light text-dark"
                                         };
                                     }
                                     <span class="badge @badgeClass">@item.Status</span>
                                 </td>
                                 <td class="text-center">
-                                    <a asp-controller="ServiceRequests" asp-action="Edit" asp-route-id="@item.RequestID"
-                                       class="btn btn-sm btn-outline-primary" title="Update status">
+                                    <a asp-controller="ServiceRequests" asp-action="Edit"
+                                           asp-route-id="@item.RequestID"
+                                           class="btn btn-sm btn-outline-primary" title="Update status">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                 </td>
@@ -132,9 +153,31 @@
                         }
                     </tbody>
                 </table>
-                </div>
-            }
-        </div>
+            </div>
+        }
     </div>
-
 </div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var stats = [
+                { id: "statPending",    val: @(ViewData["PendingCount"] ?? 0) },
+                { id: "statInProgress", val: @(ViewData["InProgressCount"] ?? 0) },
+                { id: "statCompleted",  val: @(ViewData["CompletedCount"] ?? 0) },
+                { id: "statCitizens",   val: @(ViewData["TotalCitizens"] ?? 0) },
+                { id: "statReports",    val: @(ViewData["TotalReports"] ?? 0) }
+            ];
+
+            stats.forEach(function (s) {
+                var el = document.getElementById(s.id);
+                if (el && s.val > 0) {
+                    new countUp.CountUp(s.id, s.val, {
+                        duration: 1.8,
+                        useEasing: true
+                    }).start();
+                }
+            });
+        })();
+    </script>
+}

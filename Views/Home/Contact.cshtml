@@ -1,27 +1,65 @@
-﻿@{
+@{
     ViewData["Title"] = "Contact Us";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container mt-4">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-primary mb-3">Get in Touch</h2>
-        <p class="lead">Have questions? Reach out to us anytime!</p>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header text-white fw-semibold" style="background: var(--sa-blue);">
+                    <h2 class="mb-0" style="color: #fff; font-size: 1.25rem;">
+                        <i class="bi bi-envelope-fill me-2"></i>Contact Us
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        This is a demonstration system. For support or enquiries, please contact your
+                        municipality administrator directly.
+                    </p>
 
-        <hr>
+                    <hr>
 
-        <div class="mb-3">
-            <i class="bi bi-envelope-fill text-primary"></i>
-            <strong>Email:</strong> <a href="mailto:support@municipalitysystem.com">support@municipalitysystem.com</a>
+                    <div class="mb-3">
+                        <i class="bi bi-info-circle-fill me-2" style="color: var(--sa-blue);"></i>
+                        <strong>System:</strong> Municipality Management System
+                    </div>
+
+                    <div class="mb-3">
+                        <i class="bi bi-shield-lock-fill me-2" style="color: var(--sa-green);"></i>
+                        <strong>Access:</strong> Role-based — Admin, Staff, and Citizen accounts
+                    </div>
+
+                    <div class="mb-3">
+                        <i class="bi bi-telephone-fill me-2" style="color: var(--sa-gold);"></i>
+                        <strong>Support:</strong> Contact your system administrator for account assistance
+                    </div>
+
+                    <div class="alert alert-info mt-4 mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        If you are a citizen experiencing issues with your service requests or account,
+                        please visit your nearest municipal office.
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="mb-3">
-            <i class="bi bi-telephone-fill text-primary"></i>
-            <strong>Phone:</strong> (123) 456-7890
-        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body text-center">
+                    <i class="bi bi-building" style="font-size: 3rem; color: var(--sa-blue); display: block; margin-bottom: 1rem;"></i>
+                    <h5 class="card-title">Municipality Portal</h5>
+                    <p class="card-text text-secondary">Serving citizens through digital administration</p>
+                </div>
+            </div>
 
-        <a href="mailto:support@municipalitysystem.com" class="btn btn-primary">
-            <i class="bi bi-send-fill"></i> Send an Email
-        </a>
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-headset" style="font-size: 3rem; color: var(--sa-green); display: block; margin-bottom: 1rem;"></i>
+                    <h5 class="card-title">Need Help?</h5>
+                    <p class="card-text text-secondary">Visit your nearest municipal office for in-person assistance</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

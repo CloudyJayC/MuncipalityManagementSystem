@@ -50,31 +50,6 @@ namespace MunicipalityManagementSystem.Controllers
                 .Take(5)
                 .ToListAsync();
 
-            // Line chart — requests created per day for the last 7 days
-            var today = DateTime.Today;
-            var sevenDaysAgo = today.AddDays(-6);
-
-            var requestsLast7Days = await _context.ServiceRequests
-                .Where(r => r.RequestDate.Date >= sevenDaysAgo)
-                .GroupBy(r => r.RequestDate.Date)
-                .Select(g => new { Date = g.Key, Count = g.Count() })
-                .ToListAsync();
-
-            // Build a complete 7-day series — fill 0 for days with no requests
-            var chartLabels = new List<string>();
-            var chartCounts = new List<int>();
-
-            for (int i = 6; i >= 0; i--)
-            {
-                var day = today.AddDays(-i);
-                chartLabels.Add(day.ToString("dd MMM"));
-                var match = requestsLast7Days.FirstOrDefault(x => x.Date == day);
-                chartCounts.Add(match?.Count ?? 0);
-            }
-
-            ViewData["LineChartLabels"] = System.Text.Json.JsonSerializer.Serialize(chartLabels);
-            ViewData["LineChartCounts"] = System.Text.Json.JsonSerializer.Serialize(chartCounts);
-
             return View(recentRequests);
         }
     }

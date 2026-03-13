@@ -65,9 +65,12 @@
                                         <a asp-action="Details" asp-route-id="@item.CitizenID" class="btn btn-sm btn-secondary" title="View details">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a asp-action="Edit" asp-route-id="@item.CitizenID" class="btn btn-sm btn-primary" title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@item.CitizenID" class="btn btn-sm btn-primary" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            }
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <form id="deleteCitizenForm_@item.CitizenID" asp-action="Delete" asp-route-id="@item.CitizenID" method="post" style="display: none;">

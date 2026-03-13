@@ -138,29 +138,3 @@
     });
 </script>
 }
-        // SweetAlert2 for user deletion
-        document.querySelectorAll('.sa-delete-user').forEach(function(button) {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const userId = this.getAttribute('data-id');
-                const userEmail = this.getAttribute('data-email');
-                const userName = this.getAttribute('data-name');
-
-                Swal.fire({
-                    title: 'Delete User Account?',
-                    html: 'You are about to permanently delete <strong>' + userName + '</strong> (' + userEmail + ').<br><br>Their citizen or staff record will be detached but preserved.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#C53030',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Yes, delete account',
-                    cancelButtonText: 'Cancel'
-                }).then(function(result) {
-                    if (result.isConfirmed) {
-                        document.getElementById('deleteUserForm_' + userId).submit();
-                    }
-                });
-            });
-        });
-    </script>
-}
